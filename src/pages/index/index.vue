@@ -16,34 +16,55 @@ export default {
       green: 33,
       blue: 33,
       eraser: false,
-      nextPosition: [0, 0]
+      location:[0,0],
+      gesPosition:[[0,0],[0,0]]
     };
   },
   components: {},
   methods: {
     touchStart(e) {
-      this.prevPosition = [e.touches[0].x, e.touches[0].y];
+      if (!this.isDouble(e)) {
+        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+      }else if (this.isDouble(e)) {
+        this.gesPosition=[[e.touches[0].x,e.touches[0].y],[e.touches[1].x,e.touches[1].y]];
+      }
     },
     touchMove(e) {
       let ctx = wx.createCanvasContext("Canvas");
-      if (!this.eraser) {
-        ctx.setStrokeStyle(
-          "rgb(" + this.red + ", " + this.green + ", " + this.blue + ")"
-        );
-        ctx.setLineWidth(this.width);
-      } else {
-        ctx.setStrokeStyle("white");
-        ctx.setLineWidth(10);
+      if (!this.isDouble(e)) {
+        //判断是单手指
+        if (!this.eraser) {
+          ctx.setStrokeStyle(
+            "rgb(" + this.red + ", " + this.green + ", " + this.blue + ")"
+          );
+          ctx.setLineWidth(this.width);
+        } else {
+          ctx.setStrokeStyle("white");
+          ctx.setLineWidth(10);
+        }
+        ctx.setLineCap("round");
+        ctx.setLineJoin("round");
+        ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
+        ctx.lineTo(e.touches[0].x, e.touches[0].y);
+        ctx.stroke();
+        ctx.draw(true);
+        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+      }else if (this.isDouble(e)) {
+        //判断是双手指
+        if (e.touches[0].x>e.touches[0].x&&e.touches[1].x>e) {
+          
+        }
+        console.log(e.touches);
       }
-      ctx.setLineCap("round");
-      ctx.setLineJoin("round");
-      ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
-      ctx.lineTo(e.touches[0].x, e.touches[0].y);
-      ctx.stroke();
-      ctx.draw(true);
-      this.prevPosition = [e.touches[0].x, e.touches[0].y];
     },
-    touchEnd(e) {}
+    touchEnd(e) {},
+    isDouble({touches}){
+      if(touches.length===1){
+        return false;
+      }else{
+        return true;
+      }
+    }
   }
 };
 </script><style scoped lang='scss'>
