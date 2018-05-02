@@ -1,0 +1,9 @@
+
+page.data-v-566fd662 {
+  background: rgba(153, 204, 255, 0.1);
+  transform: translateZ(0);
+}
+page ._canvas.data-v-566fd662 {
+  width: 700rpx;
+  height: 100vh;
+}
