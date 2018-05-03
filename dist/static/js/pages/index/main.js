@@ -4,6 +4,11 @@ global.webpackJsonp([3],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
@@ -23,7 +28,7 @@ global.webpackJsonp([3],{
       blue: 33,
       eraser: false,
       location: [0, 0],
-      gesPosition: [[0, 0], [0, 0]]
+      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }]
     };
   },
 
@@ -33,7 +38,7 @@ global.webpackJsonp([3],{
       if (!this.isDouble(e)) {
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
-        this.gesPosition = [[e.touches[0].x, e.touches[0].y], [e.touches[1].x, e.touches[1].y]];
+        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
       }
     },
     touchMove: function touchMove(e) {
@@ -56,7 +61,12 @@ global.webpackJsonp([3],{
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
         //判断是双手指
-        if (e.touches[0].x > e.touches[0].x && e.touches[1].x > e) {}
+        var leftOne = e.touches[0].x - this.gesPosition[0].x;
+        var lefttwo = e.touches[1].x - this.gesPosition[1].x;
+
+        if (leftOne < 0 && lefttwo < 0) {
+          console.log('手指向左滑动了');
+        }
         console.log(e.touches);
       }
     },

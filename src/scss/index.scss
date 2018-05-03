@@ -2,6 +2,7 @@ page {
   background: rgba(153, 204, 255, 0.1);
   transform:translateZ(0);
   canvas {
+  position: absolute;
   width: 700rpx;
   height:100vh;
   }

@@ -4,6 +4,7 @@ page.data-v-566fd662 {
   transform: translateZ(0);
 }
 page ._canvas.data-v-566fd662 {
+  position: absolute;
   width: 700rpx;
   height: 100vh;
 }
