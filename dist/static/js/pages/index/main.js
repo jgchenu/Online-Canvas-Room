@@ -9,11 +9,18 @@ global.webpackJsonp([3],{
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
     var ctx = wx.createCanvasContext("Canvas");
-    ctx.rect(0, 0, 1500, 2668);
+    ctx.rect(0, 0, 600, 2668);
     ctx.setFillStyle("white");
     ctx.fill();
     ctx.draw();
@@ -26,76 +33,72 @@ global.webpackJsonp([3],{
       red: 33,
       green: 33,
       blue: 33,
-      eraser: false,
       location: [0, 0],
       gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
       offsetX: 0,
       height: 1334,
-      width: 750,
+      width: 600,
       offsetY: 0,
-      timer: null
+      timer: null,
+      types: ["pencil", "move", "eraser", "clear"],
+      chosen: "pencil"
     };
   },
 
   components: {},
   methods: {
     touchStart: function touchStart(e) {
-      var _this = this;
-
       if (!this.isDouble(e)) {
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+        // this.setTimer();
       } else if (this.isDouble(e)) {
         this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
-        this.timer = setTimeout(function () {
-          _this.timer = null;
-        }, 1000);
       }
     },
     touchMove: function touchMove(e) {
-      var _this2 = this;
-
       var ctx = wx.createCanvasContext("Canvas");
-      if (!this.isDouble(e) && !this.timer) {
-        //判断是单手指
-        if (!this.eraser) {
+      //判断是单手指
+      if (this.chosen === "pencil" || this.chosen === "eraser") {
+        if (this.chosen === "pencil") {
           ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
           ctx.setLineWidth(this.w);
-        } else {
+        } else if (this.chosen == "eraser") {
           ctx.setStrokeStyle("white");
           ctx.setLineWidth(10);
         }
         ctx.setLineCap("round");
         ctx.setLineJoin("round");
-        ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
+        if (!this.timer) {
+          ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
+          // this.setTimer();
+        }
         ctx.lineTo(e.touches[0].x, e.touches[0].y);
         ctx.stroke();
         ctx.draw(true);
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
-      } else if (this.isDouble(e)) {
-        //判断是双手指
-        this.timer = setTimeout(function () {
-          _this2.timer = null;
-        }, 1000);
-        var leftOne = e.touches[0].x - this.gesPosition[0].x;
-        var leftTwo = e.touches[1].x - this.gesPosition[1].x;
-        var topOne = e.touches[0].y - this.gesPosition[0].y;
-        var topTwo = e.touches[1].y - this.gesPosition[1].y;
-        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
-        if (leftOne < 0 && leftTwo < 0 || leftOne > 0 && leftTwo > 0) {
-          this.offsetX += leftOne > leftTwo ? leftOne : leftTwo;
-        }
-        if (topOne < 0 && topOne < 0 || topOne > 0 && topTwo > 0) {
-          this.offsetY += topOne > topTwo ? topOne : topTwo;
-        }
-        if (topOne < 0 && leftOne < 0 && leftTwo > 0 && topTwo > 0 || topOne > 0 && leftOne > 0 && leftTwo < 0 && topTwo < 0) {
-          this.height -= 2;
-          this.width -= 1;
-        }
-
-        console.log(e.touches);
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+      } else if (this.chosen === "move") {
+        this.offsetX += e.touches[0].x - this.prevPosition[0];
+        this.offsetY += e.touches[0].y - this.prevPosition[1];
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
     },
-    touchEnd: function touchEnd(e) {},
+
+    //判断是双手指
+    // let leftOne = e.touches[0].x - this.gesPosition[0].x;
+    // let leftTwo = e.touches[1].x - this.gesPosition[1].x;
+    // let topOne = e.touches[0].y - this.gesPosition[0].y;
+    // let topTwo = e.touches[1].y - this.gesPosition[1].y;
+    // this.gesPosition = [
+    //   { x: e.touches[0].x, y: e.touches[0].y },
+    //   { x: e.touches[1].x, y: e.touches[1].y }
+    // ];
+    // if ((leftOne < 0 && leftTwo < 0) || (leftOne > 0 && leftTwo > 0)) {
+    //   this.offsetX += leftOne > leftTwo ? leftOne : leftTwo;
+    // }
+    // if ((topOne < 0 && topOne < 0) || (topOne > 0 && topTwo > 0)) {
+    //   this.offsetY += topOne > topTwo ? topOne : topTwo;
+    // }
+
     isDouble: function isDouble(_ref) {
       var touches = _ref.touches;
 
@@ -104,8 +107,28 @@ global.webpackJsonp([3],{
       } else {
         return true;
       }
+    },
+    choseType: function choseType(_ref2) {
+      var target = _ref2.target;
+
+      this.chosen = this.types[target.id];
+      if (this.chosen === 'clear') {
+        var ctx = wx.createCanvasContext("Canvas");
+        ctx.clearRect(0, 0, 600, 2668);
+        ctx.setFillStyle("white");
+        ctx.draw();
+        this.chosen = 'pencil';
+      }
+    },
+    setTimer: function setTimer() {
+      var _this = this;
+
+      this.timer = setTimeout(function () {
+        _this.timer = null;
+      }, 8);
     }
-  }
+  },
+  computed: function computed() {}
 });
 
 /***/ }),
@@ -124,12 +147,16 @@ global.webpackJsonp([3],{
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "index"
+  }, [_c('div', {
+    staticClass: "canvas",
+    style: ({
+      'left': _vm.offsetX + 'rpx',
+      'top': _vm.offsetY + 'rpx'
+    })
   }, [_c('canvas', {
     style: ({
       'height': _vm.height + 'rpx',
-      'width': _vm.width + 'rpx',
-      'left': _vm.offsetX + 'rpx',
-      'top': _vm.offsetY + 'rpx'
+      'width': _vm.width + 'rpx'
     }),
     attrs: {
       "canvas-id": "Canvas",
@@ -137,12 +164,29 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       "eventid": '0'
     },
     on: {
-      "touchend": _vm.touchEnd,
       "touchstart": _vm.touchStart,
-      "touchmove": _vm.touchMove,
-      "touchcancel": _vm.touchCancel
+      "touchmove": _vm.touchMove
     }
-  })])
+  })]), _vm._v(" "), _c('aside', {
+    staticClass: "types",
+    attrs: {
+      "eventid": '1'
+    },
+    on: {
+      "click": _vm.choseType
+    }
+  }, _vm._l((_vm.types), function(item, index) {
+    return _c('div', {
+      key: index,
+      staticClass: "type",
+      class: {
+        chosen: item == _vm.chosen
+      },
+      attrs: {
+        "id": index
+      }
+    }, [_vm._v("\r\n      " + _vm._s(item) + "\r\n    ")])
+  }))], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
