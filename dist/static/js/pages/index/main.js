@@ -1,15 +1,216 @@
 global.webpackJsonp([3],{
 
-/***/ 10:
+/***/ 15:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(45);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  mounted: function mounted() {
+    var ctx = wx.createCanvasContext("Canvas");
+    ctx.rect(0, 0, 600, 2668);
+    ctx.setFillStyle("white");
+    ctx.fill();
+    ctx.draw();
+  },
+  data: function data() {
+    return {
+      prevPosition: [0, 0],
+      w: 2,
+      canvasHeight: 50,
+      red: 33,
+      green: 33,
+      blue: 33,
+      location: [0, 0],
+      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
+      offsetX: 0,
+      height: 1334,
+      width: 600,
+      offsetY: 0,
+      timer: null,
+      types: ["pencil", "move", "eraser", "clear"],
+      chosen: "pencil"
+    };
+  },
+
+  components: {},
+  methods: {
+    touchStart: function touchStart(e) {
+      if (!this.isDouble(e)) {
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+        // this.setTimer();
+      } else if (this.isDouble(e)) {
+        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
+      }
+    },
+    touchMove: function touchMove(e) {
+      var ctx = wx.createCanvasContext("Canvas");
+      //判断是单手指
+      if (this.chosen === "pencil" || this.chosen === "eraser") {
+        if (this.chosen === "pencil") {
+          ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
+          ctx.setLineWidth(this.w);
+        } else if (this.chosen == "eraser") {
+          ctx.setStrokeStyle("white");
+          ctx.setLineWidth(10);
+        }
+        ctx.setLineCap("round");
+        ctx.setLineJoin("round");
+        if (!this.timer) {
+          ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
+          // this.setTimer();
+        }
+        ctx.lineTo(e.touches[0].x, e.touches[0].y);
+        ctx.stroke();
+        ctx.draw(true);
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+      } else if (this.chosen === "move") {
+        this.offsetX += e.touches[0].x - this.prevPosition[0];
+        this.offsetY += e.touches[0].y - this.prevPosition[1];
+        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+      }
+    },
+
+    //判断是双手指
+    // let leftOne = e.touches[0].x - this.gesPosition[0].x;
+    // let leftTwo = e.touches[1].x - this.gesPosition[1].x;
+    // let topOne = e.touches[0].y - this.gesPosition[0].y;
+    // let topTwo = e.touches[1].y - this.gesPosition[1].y;
+    // this.gesPosition = [
+    //   { x: e.touches[0].x, y: e.touches[0].y },
+    //   { x: e.touches[1].x, y: e.touches[1].y }
+    // ];
+    // if ((leftOne < 0 && leftTwo < 0) || (leftOne > 0 && leftTwo > 0)) {
+    //   this.offsetX += leftOne > leftTwo ? leftOne : leftTwo;
+    // }
+    // if ((topOne < 0 && topOne < 0) || (topOne > 0 && topTwo > 0)) {
+    //   this.offsetY += topOne > topTwo ? topOne : topTwo;
+    // }
+
+    isDouble: function isDouble(_ref) {
+      var touches = _ref.touches;
+
+      if (touches.length === 1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    choseType: function choseType(_ref2) {
+      var target = _ref2.target;
+
+      this.chosen = this.types[target.id];
+      if (this.chosen === 'clear') {
+        var ctx = wx.createCanvasContext("Canvas");
+        ctx.clearRect(0, 0, 600, 2668);
+        ctx.setFillStyle("white");
+        ctx.draw();
+        this.chosen = 'pencil';
+      }
+    },
+    setTimer: function setTimer() {
+      var _this = this;
+
+      this.timer = setTimeout(function () {
+        _this.timer = null;
+      }, 8);
+    }
+  },
+  computed: function computed() {}
+});
+
+/***/ }),
+
+/***/ 19:
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 25:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "index"
+  }, [_c('div', {
+    staticClass: "canvas",
+    style: ({
+      'left': _vm.offsetX + 'rpx',
+      'top': _vm.offsetY + 'rpx'
+    })
+  }, [_c('canvas', {
+    style: ({
+      'height': _vm.height + 'rpx',
+      'width': _vm.width + 'rpx'
+    }),
+    attrs: {
+      "canvas-id": "Canvas",
+      "disable-scroll": "true",
+      "eventid": '0'
+    },
+    on: {
+      "touchstart": _vm.touchStart,
+      "touchmove": _vm.touchMove
+    }
+  })]), _vm._v(" "), _c('aside', {
+    staticClass: "types",
+    attrs: {
+      "eventid": '1'
+    },
+    on: {
+      "click": _vm.choseType
+    }
+  }, _vm._l((_vm.types), function(item, index) {
+    return _c('div', {
+      key: index,
+      staticClass: "type",
+      class: {
+        chosen: item == _vm.chosen
+      },
+      attrs: {
+        "id": index
+      }
+    }, [_vm._v("\r\n      " + _vm._s(item) + "\r\n    ")])
+  }))], 1)
+}
+var staticRenderFns = []
+render._withStripped = true
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+  }
+}
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(25);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(39)
+  __webpack_require__(19)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -54,165 +255,21 @@ if (false) {(function () {
 
 /***/ }),
 
-/***/ 15:
+/***/ 9:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(4);
 
 
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a(__WEBPACK_IMPORTED_MODULE_1__index__["a" /* default */]);
 app.$mount();
 
-/***/ }),
-
-/***/ 21:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-  mounted: function mounted() {
-    var ctx = wx.createCanvasContext("Canvas");
-    ctx.rect(0, 0, 1500, 2668);
-    ctx.setFillStyle("white");
-    ctx.fill();
-    ctx.draw();
-  },
-  data: function data() {
-    return {
-      prevPosition: [0, 0],
-      w: 2,
-      canvasHeight: 50,
-      red: 33,
-      green: 33,
-      blue: 33,
-      eraser: false,
-      location: [0, 0],
-      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
-      offsetX: 0,
-      height: 2668,
-      width: 1500
-    };
-  },
-
-  components: {},
-  methods: {
-    touchStart: function touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
-      } else if (this.isDouble(e)) {
-        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
-      }
-    },
-    touchMove: function touchMove(e) {
-      var ctx = wx.createCanvasContext("Canvas");
-      if (!this.isDouble(e)) {
-        //判断是单手指
-        if (!this.eraser) {
-          ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
-          ctx.setLineWidth(this.w);
-        } else {
-          ctx.setStrokeStyle("white");
-          ctx.setLineWidth(10);
-        }
-        ctx.setLineCap("round");
-        ctx.setLineJoin("round");
-        ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
-        ctx.lineTo(e.touches[0].x, e.touches[0].y);
-        ctx.stroke();
-        ctx.draw(true);
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
-      } else if (this.isDouble(e)) {
-        //判断是双手指
-        var leftOne = e.touches[0].x - this.gesPosition[0].x;
-        var lefttwo = e.touches[1].x - this.gesPosition[1].x;
-        var topOne = e.touches[0].y - this.gesPosition[0].x;
-        var topTwo = e.touches[1].y - this.gesPosition[1].y;
-        if (leftOne < 0 && lefttwo < 0) {
-          console.log("手指向左右滑动了");
-          this.height = this.height * 1.1;
-          this.width = this.width * 1.1;
-          if (leftOne > lefttwo) {
-            // this.offsetX += leftOne;
-          } else {
-              // this.offsetX+=lefttwo;
-            }
-        } else if (leftOne > 0 && lefttwo > 0) {
-          this.height = this.height / 1.1;
-          this.width = this.width / 1.1;
-        }
-        console.log(e.touches);
-      }
-    },
-    touchEnd: function touchEnd(e) {},
-    isDouble: function isDouble(_ref) {
-      var touches = _ref.touches;
-
-      if (touches.length === 1) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-  }
-});
-
-/***/ }),
-
-/***/ 39:
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 45:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "index"
-  }, [_c('canvas', {
-    style: ({
-      left: _vm.offsetX + 'rpx',
-      width: _vm.width + 'rpx',
-      height: _vm.height + 'rpx'
-    }),
-    attrs: {
-      "canvas-id": "Canvas",
-      "disable-scroll": "true",
-      "eventid": '0'
-    },
-    on: {
-      "touchend": _vm.touchEnd,
-      "touchstart": _vm.touchStart,
-      "touchmove": _vm.touchMove
-    }
-  })])
-}
-var staticRenderFns = []
-render._withStripped = true
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
-  }
-}
-
 /***/ })
 
-},[15]);
+},[9]);
 //# sourceMappingURL=main.js.map

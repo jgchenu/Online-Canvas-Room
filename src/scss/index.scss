@@ -1,8 +1,23 @@
 page {
-  background: rgba(153, 204, 255, 0.1);
-  transform:translateZ(0);
-  canvas {
-  position: absolute;
-  }
+    background: rgba(153, 204, 255, 0.1);
+    transform: translateZ(0);
+    position: relative;
+    .canvas {
+        position: absolute;
+        border: 1px solid #000;
+        z-index: 2;
+    }
+    .types {
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 99999999;
+        .type {
+            width: 140rpx;
+            height: 100rpx;
+        }
+        .chosen{
+          color: aqua;
+        }
+    }
 }
-

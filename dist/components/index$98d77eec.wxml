@@ -1,4 +1,4 @@
-<template name="index$9b4424aa">
+<template name="index$98d77eec">
   <view class="_div data-v-566fd662 index">
     <view class="_div data-v-566fd662 canvas" style=" {{('left:' + offsetX + 'rpx' + ';' + 'top:' + offsetY + 'rpx' + ';')}}">
       <canvas canvas-id="Canvas" disable-scroll="true" bindtouchstart="handleProxy" bindtouchmove="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-566fd662" style=" {{('height:' + height + 'rpx' + ';' + 'width:' + width + 'rpx' + ';')}}"></canvas>
