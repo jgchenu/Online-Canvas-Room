@@ -1,5 +1,5 @@
 <template name="index$9b4424aa">
   <view class="_div data-v-566fd662 index">
-    <canvas canvas-id="Canvas" disable-scroll="true" bindtouchend="handleProxy" bindtouchstart="handleProxy" bindtouchmove="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-566fd662"></canvas>
+    <canvas canvas-id="Canvas" disable-scroll="true" bindtouchend="handleProxy" bindtouchstart="handleProxy" bindtouchmove="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-566fd662" style=" {{(  'left:' +  offsetX +  'rpx' +  ';' +  'width:' +  width +  'rpx' +  ';' +  'height:' +  height +  'rpx' +  ';')}}"></canvas>
   </view>
 </template>
