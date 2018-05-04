@@ -32,22 +32,30 @@ global.webpackJsonp([3],{
       offsetX: 0,
       height: 1334,
       width: 750,
-      offsetY: 0
+      offsetY: 0,
+      timer: null
     };
   },
 
   components: {},
   methods: {
     touchStart: function touchStart(e) {
+      var _this = this;
+
       if (!this.isDouble(e)) {
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
         this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
+        this.timer = setTimeout(function () {
+          _this.timer = null;
+        }, 1000);
       }
     },
     touchMove: function touchMove(e) {
+      var _this2 = this;
+
       var ctx = wx.createCanvasContext("Canvas");
-      if (!this.isDouble(e)) {
+      if (!this.isDouble(e) && !this.timer) {
         //判断是单手指
         if (!this.eraser) {
           ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
@@ -65,7 +73,9 @@ global.webpackJsonp([3],{
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
         //判断是双手指
-
+        this.timer = setTimeout(function () {
+          _this2.timer = null;
+        }, 1000);
         var leftOne = e.touches[0].x - this.gesPosition[0].x;
         var leftTwo = e.touches[1].x - this.gesPosition[1].x;
         var topOne = e.touches[0].y - this.gesPosition[0].y;
@@ -77,6 +87,11 @@ global.webpackJsonp([3],{
         if (topOne < 0 && topOne < 0 || topOne > 0 && topTwo > 0) {
           this.offsetY += topOne > topTwo ? topOne : topTwo;
         }
+        if (topOne < 0 && leftOne < 0 && leftTwo > 0 && topTwo > 0 || topOne > 0 && leftOne > 0 && leftTwo < 0 && topTwo < 0) {
+          this.height -= 2;
+          this.width -= 1;
+        }
+
         console.log(e.touches);
       }
     },
@@ -124,7 +139,8 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
     on: {
       "touchend": _vm.touchEnd,
       "touchstart": _vm.touchStart,
-      "touchmove": _vm.touchMove
+      "touchmove": _vm.touchMove,
+      "touchcancel": _vm.touchCancel
     }
   })])
 }

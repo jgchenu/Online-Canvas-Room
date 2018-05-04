@@ -1,6 +1,6 @@
 <template>
 <div class="index">
-  <canvas canvas-id="Canvas" v-bind:style="{'height':height+'rpx','width':width+'rpx','left':offsetX+'rpx','top':offsetY+'rpx'}" disable-scroll="true" @touchend="touchEnd" @touchstart="touchStart" @touchmove="touchMove"/>
+  <canvas canvas-id="Canvas" v-bind:style="{'height':height+'rpx','width':width+'rpx','left':offsetX+'rpx','top':offsetY+'rpx'}" disable-scroll="true" @touchend="touchEnd" @touchstart="touchStart" @touchmove="touchMove" @touchcancel="touchCancel"/>
 </div>
 </template>
 <script>
@@ -26,7 +26,8 @@ export default {
       offsetX: 0,
       height: 1334,
       width: 750,
-      offsetY:0
+      offsetY:0,
+      timer:null
     };
   },
   components: {},
@@ -39,11 +40,14 @@ export default {
           { x: e.touches[0].x, y: e.touches[0].y },
           { x: e.touches[1].x, y: e.touches[1].y }
         ];
+        this.timer=setTimeout(() => {
+          this.timer=null;
+        }, 1000);
       }
     },
     touchMove(e) {
       let ctx = wx.createCanvasContext("Canvas");
-      if (!this.isDouble(e)) {
+      if (!this.isDouble(e)&&!this.timer) {
         //判断是单手指
         if (!this.eraser) {
           ctx.setStrokeStyle(
@@ -63,7 +67,9 @@ export default {
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
         //判断是双手指
-
+        this.timer=setTimeout(() => {
+          this.timer=null;
+        }, 1000);
         let leftOne = e.touches[0].x - this.gesPosition[0].x;
         let leftTwo = e.touches[1].x - this.gesPosition[1].x;
         let topOne=e.touches[0].y - this.gesPosition[0].y;
@@ -78,6 +84,11 @@ export default {
         if ((topOne < 0 && topOne < 0) || (topOne > 0 && topTwo > 0)) {
           this.offsetY += topOne>topTwo?topOne:topTwo;
         }
+        if(topOne<0&&leftOne<0&&leftTwo>0&&topTwo>0||topOne>0&&leftOne>0&&leftTwo<0&&topTwo<0){
+          this.height-=2;
+          this.width-=1;
+        }
+        
         console.log(e.touches);
       }
     },
