@@ -21,14 +21,18 @@ global.webpackJsonp([3],{
   data: function data() {
     return {
       prevPosition: [0, 0],
-      width: 2,
+      w: 2,
       canvasHeight: 50,
       red: 33,
       green: 33,
       blue: 33,
       eraser: false,
       location: [0, 0],
-      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }]
+      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
+      offsetX: 0,
+      height: 1334,
+      width: 750,
+      offsetY: 0
     };
   },
 
@@ -47,7 +51,7 @@ global.webpackJsonp([3],{
         //判断是单手指
         if (!this.eraser) {
           ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
-          ctx.setLineWidth(this.width);
+          ctx.setLineWidth(this.w);
         } else {
           ctx.setStrokeStyle("white");
           ctx.setLineWidth(10);
@@ -61,11 +65,17 @@ global.webpackJsonp([3],{
         this.prevPosition = [e.touches[0].x, e.touches[0].y];
       } else if (this.isDouble(e)) {
         //判断是双手指
-        var leftOne = e.touches[0].x - this.gesPosition[0].x;
-        var lefttwo = e.touches[1].x - this.gesPosition[1].x;
 
-        if (leftOne < 0 && lefttwo < 0) {
-          console.log('手指向左滑动了');
+        var leftOne = e.touches[0].x - this.gesPosition[0].x;
+        var leftTwo = e.touches[1].x - this.gesPosition[1].x;
+        var topOne = e.touches[0].y - this.gesPosition[0].y;
+        var topTwo = e.touches[1].y - this.gesPosition[1].y;
+        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
+        if (leftOne < 0 && leftTwo < 0 || leftOne > 0 && leftTwo > 0) {
+          this.offsetX += leftOne > leftTwo ? leftOne : leftTwo;
+        }
+        if (topOne < 0 && topOne < 0 || topOne > 0 && topTwo > 0) {
+          this.offsetY += topOne > topTwo ? topOne : topTwo;
         }
         console.log(e.touches);
       }
@@ -100,6 +110,12 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
   return _c('div', {
     staticClass: "index"
   }, [_c('canvas', {
+    style: ({
+      'height': _vm.height + 'rpx',
+      'width': _vm.width + 'rpx',
+      'left': _vm.offsetX + 'rpx',
+      'top': _vm.offsetY + 'rpx'
+    }),
     attrs: {
       "canvas-id": "Canvas",
       "disable-scroll": "true",

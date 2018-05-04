@@ -5,6 +5,4 @@ page.data-v-566fd662 {
 }
 page ._canvas.data-v-566fd662 {
   position: absolute;
-  width: 700rpx;
-  height: 100vh;
 }
