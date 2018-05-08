@@ -3,8 +3,10 @@ import App from './index'
 
 const app = new Vue(App)
 app.$mount()
+
 export default {
   config: {
-    navigationBarTitleText: '小画板'
+    navigationBarTitleText: '画板房间',
+    navigationBarBackgroundColor: '#6A7D8E',
   }
 }

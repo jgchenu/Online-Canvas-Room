@@ -1,6 +1,6 @@
-global.webpackJsonp([4],{
+global.webpackJsonp([5],{
 
-/***/ 12:
+/***/ 14:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8,11 +8,12 @@ global.webpackJsonp([4],{
 /* harmony default export */ __webpack_exports__["a"] = ({
   created: function created() {
     // 调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || [];
-    logs.unshift(Date.now());
-    wx.setStorageSync('logs', logs);
+    // const logs = wx.getStorageSync('logs') || []
+    // logs.unshift(Date.now())
+    // wx.setStorageSync('logs', logs)
 
-    console.log('app created and cache logs by setStorageSync');
+    // console.log('app created and cache logs by setStorageSync')
+
   }
 });
 
@@ -22,11 +23,11 @@ global.webpackJsonp([4],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(14);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(21)
+  __webpack_require__(25)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -70,14 +71,14 @@ if (false) {(function () {
 
 /***/ }),
 
-/***/ 21:
+/***/ 25:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 6:
+/***/ 7:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -98,7 +99,7 @@ app.$mount();
   // 这个字段走 app.json
   config: {
     // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
-    pages: ['pages/logs/main', '^pages/index/main'],
+    pages: ['pages/logs/main', 'pages/index/main', '^pages/enter/main'],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
@@ -110,5 +111,5 @@ app.$mount();
 
 /***/ })
 
-},[6]);
+},[7]);
 //# sourceMappingURL=app.js.map

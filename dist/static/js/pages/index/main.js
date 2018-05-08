@@ -1,6 +1,27 @@
 global.webpackJsonp([3],{
 
-/***/ 15:
+/***/ 11:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(5);
+
+
+
+var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a(__WEBPACK_IMPORTED_MODULE_1__index__["a" /* default */]);
+app.$mount();
+/* harmony default export */ __webpack_exports__["default"] = ({
+  config: {
+    navigationBarTitleText: '小画板'
+  }
+});
+
+/***/ }),
+
+/***/ 18:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -82,23 +103,6 @@ global.webpackJsonp([3],{
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
     },
-
-    //判断是双手指
-    // let leftOne = e.touches[0].x - this.gesPosition[0].x;
-    // let leftTwo = e.touches[1].x - this.gesPosition[1].x;
-    // let topOne = e.touches[0].y - this.gesPosition[0].y;
-    // let topTwo = e.touches[1].y - this.gesPosition[1].y;
-    // this.gesPosition = [
-    //   { x: e.touches[0].x, y: e.touches[0].y },
-    //   { x: e.touches[1].x, y: e.touches[1].y }
-    // ];
-    // if ((leftOne < 0 && leftTwo < 0) || (leftOne > 0 && leftTwo > 0)) {
-    //   this.offsetX += leftOne > leftTwo ? leftOne : leftTwo;
-    // }
-    // if ((topOne < 0 && topOne < 0) || (topOne > 0 && topTwo > 0)) {
-    //   this.offsetY += topOne > topTwo ? topOne : topTwo;
-    // }
-
     isDouble: function isDouble(_ref) {
       var touches = _ref.touches;
 
@@ -133,14 +137,14 @@ global.webpackJsonp([3],{
 
 /***/ }),
 
-/***/ 19:
+/***/ 22:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 25:
+/***/ 29:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -201,16 +205,16 @@ if (false) {
 
 /***/ }),
 
-/***/ 4:
+/***/ 5:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(29);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(19)
+  __webpack_require__(22)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
@@ -253,23 +257,7 @@ if (false) {(function () {
 /* harmony default export */ __webpack_exports__["a"] = (Component.exports);
 
 
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(4);
-
-
-
-var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a(__WEBPACK_IMPORTED_MODULE_1__index__["a" /* default */]);
-app.$mount();
-
 /***/ })
 
-},[9]);
+},[11]);
 //# sourceMappingURL=main.js.map
