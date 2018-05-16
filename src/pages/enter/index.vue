@@ -5,7 +5,7 @@
     <section class="members">
           <img v-for="(item,index) in members" :key="index" :src="item.imgUrl" />
     </section>
-    <button @click="sendMessage">sendMessage</button>
+    <button @click="sendMessage"  v-if="tunnelStatus==='connected'">sendMessage</button>
     <footer
       class="newRoom room"
       @click="newRoom"
