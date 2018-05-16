@@ -1,19 +1,19 @@
 <script>
 export default {
-  created () {
+  created() {
     // 调用API从本地缓存中获取数据
     // const logs = wx.getStorageSync('logs') || []
     // logs.unshift(Date.now())
     // wx.setStorageSync('logs', logs)
-
-    // console.log('app created and cache logs by setStorageSync')
-
+    var qcloud = require("./wafer/index");
+    var config = require("./config");
+    qcloud.setLoginUrl(config.service.loginUrl)
+    console.log("app created and cache logs by setStorageSync");
   }
-}
+};
 </script>
 
 <style>
-
 /* this rule will be remove */
 * {
   transition: width 2s;
