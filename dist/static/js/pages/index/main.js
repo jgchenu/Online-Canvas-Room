@@ -1,17 +1,17 @@
-global.webpackJsonp([4],{
+global.webpackJsonp([2],{
 
-/***/ 12:
+/***/ 13:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(26);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(31)
+  __webpack_require__(23)
 }
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(5)
 /* script */
 
 /* template */
@@ -23,8 +23,8 @@ var __vue_scopeId__ = "data-v-566fd662"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
   __vue_styles__,
   __vue_scopeId__,
   __vue_module_identifier__
@@ -35,7 +35,7 @@ if (Component.options.functional) {console.error("[vue-loader] index.vue: functi
 
 /* hot reload */
 if (false) {(function () {
-  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
   module.hot.accept()
@@ -54,14 +54,14 @@ if (false) {(function () {
 
 /***/ }),
 
-/***/ 18:
+/***/ 16:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index__ = __webpack_require__(13);
 
 
 
@@ -75,10 +75,14 @@ app.$mount();
 
 /***/ }),
 
-/***/ 27:
+/***/ 22:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(10);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 //
 //
 //
@@ -92,6 +96,11 @@ app.$mount();
 //
 //
 
+
+
+var qcloud = __webpack_require__(3);
+var config = __webpack_require__(2);
+var util = __webpack_require__(17);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
     var ctx = wx.createCanvasContext("Canvas");
@@ -99,20 +108,21 @@ app.$mount();
     ctx.setFillStyle("white");
     ctx.fill();
     ctx.draw();
+    //调用监听服务器返回
+    this.listenTunnel();
   },
   data: function data() {
     return {
       prevPosition: [0, 0],
       w: 2,
-      canvasHeight: 50,
       red: 33,
       green: 33,
       blue: 33,
       location: [0, 0],
       gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
-      offsetX: 0,
       height: 1334,
       width: 600,
+      offsetX: 0,
       offsetY: 0,
       timer: null,
       types: ["pencil", "move", "eraser", "clear"],
@@ -121,15 +131,23 @@ app.$mount();
   },
 
   components: {},
-  methods: {
+  methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus"]), {
+    //触摸开始事件
     touchStart: function touchStart(e) {
       if (!this.isDouble(e)) {
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+        this.sendMessage();
         // this.setTimer();
-      } else if (this.isDouble(e)) {
-        this.gesPosition = [{ x: e.touches[0].x, y: e.touches[0].y }, { x: e.touches[1].x, y: e.touches[1].y }];
       }
+      // else if (this.isDouble(e)) {
+      //   this.gesPosition = [
+      //     { x: e.touches[0].x, y: e.touches[0].y },
+      //     { x: e.touches[1].x, y: e.touches[1].y }
+      //   ];
+      // }
     },
+
+    //手指移动事件
     touchMove: function touchMove(e) {
       var ctx = wx.createCanvasContext("Canvas");
       //判断是单手指
@@ -157,6 +175,8 @@ app.$mount();
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
     },
+
+    //判断是否是单指
     isDouble: function isDouble(_ref) {
       var touches = _ref.touches;
 
@@ -166,39 +186,66 @@ app.$mount();
         return true;
       }
     },
+
+    //选择动作类型
     choseType: function choseType(_ref2) {
       var target = _ref2.target;
 
       this.chosen = this.types[target.id];
-      if (this.chosen === 'clear') {
+      if (this.chosen === "clear") {
         var ctx = wx.createCanvasContext("Canvas");
         ctx.clearRect(0, 0, 600, 2668);
         ctx.setFillStyle("white");
         ctx.draw();
-        this.chosen = 'pencil';
+        this.chosen = "pencil";
       }
     },
+
+    //定时器
     setTimer: function setTimer() {
       var _this = this;
 
       this.timer = setTimeout(function () {
         _this.timer = null;
       }, 8);
+    },
+    listenTunnel: function listenTunnel() {
+      var tunnel = this.tunnel;
+      // 监听自定义消息（服务器进行推送）
+      tunnel.on("speak", function (speak) {
+        util.showModel("信道消息", speak.word);
+        console.log("收到说话消息：", speak);
+      });
+    },
+
+    /**
+     * 点击「发送消息」按钮，测试使用信道发送消息
+     */
+    sendMessage: function sendMessage() {
+      if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
+      // 使用 tunnel.isActive() 来检测当前信道是否处于可用状态
+      if (this.tunnel && this.tunnel.isActive()) {
+        // 使用信道给服务器推送「speak」消息
+        this.tunnel.emit("speak", {
+          word: "I say writing start at (" + this.prevPosition[0] + "," + this.prevPosition[1] + ")"
+        });
+      }
     }
-  },
-  computed: function computed() {}
+  }),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "tunnelStatus"])),
+  store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 
 /***/ }),
 
-/***/ 31:
+/***/ 23:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 38:
+/***/ 26:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -253,11 +300,11 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
   }
 }
 
 /***/ })
 
-},[18]);
+},[16]);
 //# sourceMappingURL=main.js.map

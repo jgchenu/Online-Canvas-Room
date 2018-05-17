@@ -1,9 +1,7 @@
 {
   "pages": [
     "pages/enter/main",
-    "pages/counter/main",
-    "pages/index/main",
-    "pages/logs/main"
+    "pages/index/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

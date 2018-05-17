@@ -13,3 +13,12 @@
     // if ((topOne < 0 && topOne < 0) || (topOne > 0 && topTwo > 0)) {
     //   this.offsetY += topOne > topTwo ? topOne : topTwo;
     // }
+        // { imgUrl: "http://chenjianguang.com/static/images/5.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/2.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/3.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/4.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/5.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/6.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/7.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/8.jpg" },
+        // { imgUrl: "http://chenjianguang.com/static/images/1.jpg" }

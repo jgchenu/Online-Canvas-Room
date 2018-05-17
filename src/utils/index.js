@@ -31,10 +31,17 @@ var showSuccess = text => wx.showToast({
 // 显示失败提示
 var showModel = (title, content) => {
   wx.hideToast();
-
   wx.showModal({
     title,
     content: JSON.stringify(content),
+    showCancel: false
+  })
+}
+var showTip = (title, content) => {
+  wx.hideToast();
+  wx.showModal({
+    title,
+    content: content,
     showCancel: false
   })
 }
@@ -43,6 +50,7 @@ module.exports = {
   formatTime,
   showBusy,
   showSuccess,
-  showModel
+  showModel,
+  showTip
 }
 
