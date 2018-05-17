@@ -1,4 +1,4 @@
-global.webpackJsonp([2],[
+global.webpackJsonp([0],[
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5649,9 +5649,68 @@ module.exports = Session;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+/**
+ * 小程序配置文件, 使用前更名为config.js
+ */
+
+var host = 'https://board.upwki.com/api/weapp';
+
+var config = {
+
+        // 下面的地址配合云端 Demo 工作
+        service: {
+                host: host,
+
+                // 登录地址，用于建立会话
+                loginUrl: host + '/login',
+
+                // 测试的请求地址，用于测试会话
+                requestUrl: host + '/user',
+
+                // 测试的信道服务地址
+                tunnelUrl: host + '/tunnel',
+
+                // 上传图片接口
+                uploadUrl: host + '/upload'
+        }
+};
+
+module.exports = config;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var utils = __webpack_require__(6);
+var constants = __webpack_require__(2);
+var login = __webpack_require__(6);
+var Session = __webpack_require__(3);
+var request = __webpack_require__(7);
+var Tunnel = __webpack_require__(21);
+
+var exports = module.exports = {
+    login: login.login,
+    setLoginUrl: login.setLoginUrl,
+    LoginError: login.LoginError,
+    clearSession: Session.clear,
+    request: request.request,
+    RequestError: request.RequestError,
+    Tunnel: Tunnel
+};
+
+// 导出错误类型码
+Object.keys(constants).forEach(function (key) {
+    if (key.indexOf('ERR_') === 0) {
+        exports[key] = constants[key];
+    }
+});
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var utils = __webpack_require__(8);
 var constants = __webpack_require__(2);
 var Session = __webpack_require__(3);
 
@@ -5814,15 +5873,15 @@ module.exports = {
 };
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var constants = __webpack_require__(2);
-var utils = __webpack_require__(6);
+var utils = __webpack_require__(8);
 var Session = __webpack_require__(3);
-var loginLib = __webpack_require__(4);
+var loginLib = __webpack_require__(6);
 
 var noop = function noop() {};
 
@@ -5933,7 +5992,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports) {
 
 
@@ -5956,43 +6015,10 @@ exports.extend = function extend(target) {
 };
 
 /***/ }),
-/* 7 */,
-/* 8 */,
 /* 9 */,
 /* 10 */,
 /* 11 */,
-/* 12 */
-/***/ (function(module, exports) {
-
-/**
- * 小程序配置文件, 使用前更名为config.js
- */
-
-var host = 'https://board.upwki.com/api/weapp';
-
-var config = {
-
-        // 下面的地址配合云端 Demo 工作
-        service: {
-                host: host,
-
-                // 登录地址，用于建立会话
-                loginUrl: host + '/login',
-
-                // 测试的请求地址，用于测试会话
-                requestUrl: host + '/user',
-
-                // 测试的信道服务地址
-                tunnelUrl: host + '/tunnel',
-
-                // 上传图片接口
-                uploadUrl: host + '/upload'
-        }
-};
-
-module.exports = config;
-
-/***/ }),
+/* 12 */,
 /* 13 */,
 /* 14 */,
 /* 15 */,
@@ -6000,37 +6026,11 @@ module.exports = config;
 /* 17 */,
 /* 18 */,
 /* 19 */,
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var constants = __webpack_require__(2);
-var login = __webpack_require__(4);
-var Session = __webpack_require__(3);
-var request = __webpack_require__(5);
-var Tunnel = __webpack_require__(21);
-
-var exports = module.exports = {
-    login: login.login,
-    setLoginUrl: login.setLoginUrl,
-    LoginError: login.LoginError,
-    clearSession: Session.clear,
-    request: request.request,
-    RequestError: request.RequestError,
-    Tunnel: Tunnel
-};
-
-// 导出错误类型码
-Object.keys(constants).forEach(function (key) {
-    if (key.indexOf('ERR_') === 0) {
-        exports[key] = constants[key];
-    }
-});
-
-/***/ }),
+/* 20 */,
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var requestLib = __webpack_require__(5);
+var requestLib = __webpack_require__(7);
 var wxTunnel = __webpack_require__(22);
 
 /**
