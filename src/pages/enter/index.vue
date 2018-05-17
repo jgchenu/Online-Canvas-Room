@@ -26,8 +26,14 @@ var qcloud = require("../..//wafer/index");
 var config = require("../../config");
 var util = require("../../utils/index.js");
 export default {
+
   created() {
     this.login();
+  },
+  onLoad(options) {
+    // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
+    var scene = decodeURIComponent(options.scene)
+    console.log(scene)
   },
   data() {
     return {
