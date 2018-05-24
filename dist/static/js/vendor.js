@@ -4146,7 +4146,7 @@ Object.defineProperty(Vue$3.prototype, '$ssrContext', {
 });
 
 Vue$3.version = '2.4.1';
-Vue$3.mpvueVersion = '1.0.9';
+Vue$3.mpvueVersion = '1.0.8';
 
 /* globals renderer */
 
@@ -5500,35 +5500,10 @@ return Vue$3;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34)))
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = {
-    WX_HEADER_CODE: 'X-WX-Code',
-    WX_HEADER_ENCRYPTED_DATA: 'X-WX-Encrypted-Data',
-    WX_HEADER_IV: 'X-WX-IV',
-    WX_HEADER_ID: 'X-WX-Id',
-    WX_HEADER_SKEY: 'X-WX-Skey',
-
-    WX_SESSION_MAGIC_ID: 'F2C224D4-2BCE-4C64-AF9F-A6D872000D1A',
-
-    ERR_INVALID_PARAMS: 'ERR_INVALID_PARAMS',
-
-    ERR_WX_LOGIN_FAILED: 'ERR_WX_LOGIN_FAILED',
-    ERR_WX_GET_USER_INFO: 'ERR_WX_GET_USER_INFO',
-    ERR_LOGIN_TIMEOUT: 'ERR_LOGIN_TIMEOUT',
-    ERR_LOGIN_FAILED: 'ERR_LOGIN_FAILED',
-    ERR_LOGIN_SESSION_NOT_RECEIVED: 'ERR_LOGIN_MISSING_SESSION',
-
-    ERR_SESSION_INVALID: 'ERR_SESSION_INVALID',
-    ERR_CHECK_LOGIN_FAILED: 'ERR_CHECK_LOGIN_FAILED'
-};
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 /**
@@ -5560,14 +5535,14 @@ var config = {
 module.exports = config;
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var constants = __webpack_require__(1);
-var login = __webpack_require__(7);
-var Session = __webpack_require__(4);
-var request = __webpack_require__(8);
-var Tunnel = __webpack_require__(18);
+var constants = __webpack_require__(3);
+var login = __webpack_require__(9);
+var Session = __webpack_require__(5);
+var request = __webpack_require__(10);
+var Tunnel = __webpack_require__(20);
 
 var exports = module.exports = {
     login: login.login,
@@ -5587,30 +5562,32 @@ Object.keys(constants).forEach(function (key) {
 });
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 3 */
+/***/ (function(module, exports) {
 
-var constants = __webpack_require__(1);
-var SESSION_KEY = 'weapp_session_' + constants.WX_SESSION_MAGIC_ID;
+module.exports = {
+    WX_HEADER_CODE: 'X-WX-Code',
+    WX_HEADER_ENCRYPTED_DATA: 'X-WX-Encrypted-Data',
+    WX_HEADER_IV: 'X-WX-IV',
+    WX_HEADER_ID: 'X-WX-Id',
+    WX_HEADER_SKEY: 'X-WX-Skey',
 
-var Session = {
-    get: function get() {
-        return wx.getStorageSync(SESSION_KEY) || null;
-    },
+    WX_SESSION_MAGIC_ID: 'F2C224D4-2BCE-4C64-AF9F-A6D872000D1A',
 
-    set: function set(session) {
-        wx.setStorageSync(SESSION_KEY, session);
-    },
+    ERR_INVALID_PARAMS: 'ERR_INVALID_PARAMS',
 
-    clear: function clear() {
-        wx.removeStorageSync(SESSION_KEY);
-    }
+    ERR_WX_LOGIN_FAILED: 'ERR_WX_LOGIN_FAILED',
+    ERR_WX_GET_USER_INFO: 'ERR_WX_GET_USER_INFO',
+    ERR_LOGIN_TIMEOUT: 'ERR_LOGIN_TIMEOUT',
+    ERR_LOGIN_FAILED: 'ERR_LOGIN_FAILED',
+    ERR_LOGIN_SESSION_NOT_RECEIVED: 'ERR_LOGIN_MISSING_SESSION',
+
+    ERR_SESSION_INVALID: 'ERR_SESSION_INVALID',
+    ERR_CHECK_LOGIN_FAILED: 'ERR_CHECK_LOGIN_FAILED'
 };
 
-module.exports = Session;
-
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -5707,345 +5684,30 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var constants = __webpack_require__(3);
+var SESSION_KEY = 'weapp_session_' + constants.WX_SESSION_MAGIC_ID;
+
+var Session = {
+    get: function get() {
+        return wx.getStorageSync(SESSION_KEY) || null;
+    },
+
+    set: function set(session) {
+        wx.setStorageSync(SESSION_KEY, session);
+    },
+
+    clear: function clear() {
+        wx.removeStorageSync(SESSION_KEY);
+    }
+};
+
+module.exports = Session;
+
+/***/ }),
 /* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(10);
-
-
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */]);
-
-//引入wafer跟提示api
-var qcloud = __webpack_require__(3);
-var config = __webpack_require__(2);
-
-var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
-  state: {
-    tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
-    tunnelStatus: 'closed'
-  },
-  mutations: {
-    changeStatus: function changeStatus(state, status) {
-      state.tunnelStatus = status;
-    }
-  }
-});
-
-/* harmony default export */ __webpack_exports__["a"] = (store);
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var utils = __webpack_require__(9);
-var constants = __webpack_require__(1);
-var Session = __webpack_require__(4);
-
-/***
- * @class
- * 表示登录过程中发生的异常
- */
-var LoginError = function () {
-    function LoginError(type, message) {
-        Error.call(this, message);
-        this.type = type;
-        this.message = message;
-    }
-
-    LoginError.prototype = new Error();
-    LoginError.prototype.constructor = LoginError;
-
-    return LoginError;
-}();
-
-/**
- * 微信登录，获取 code 和 encryptData
- */
-var getWxLoginResult = function getLoginCode(callback) {
-    wx.login({
-        success: function success(loginResult) {
-            wx.getUserInfo({
-                success: function success(userResult) {
-                    callback(null, {
-                        code: loginResult.code,
-                        encryptedData: userResult.encryptedData,
-                        iv: userResult.iv,
-                        userInfo: userResult.userInfo
-                    });
-                },
-
-                fail: function fail(userError) {
-                    var error = new LoginError(constants.ERR_WX_GET_USER_INFO, '获取微信用户信息失败，请检查网络状态');
-                    error.detail = userError;
-                    callback(error, null);
-                }
-            });
-        },
-
-        fail: function fail(loginError) {
-            var error = new LoginError(constants.ERR_WX_LOGIN_FAILED, '微信登录失败，请检查网络状态');
-            error.detail = loginError;
-            callback(error, null);
-        }
-    });
-};
-
-var noop = function noop() {};
-var defaultOptions = {
-    method: 'GET',
-    success: noop,
-    fail: noop,
-    loginUrl: null
-};
-
-/**
- * @method
- * 进行服务器登录，以获得登录会话
- *
- * @param {Object} options 登录配置
- * @param {string} options.loginUrl 登录使用的 URL，服务器应该在这个 URL 上处理登录请求
- * @param {string} [options.method] 请求使用的 HTTP 方法，默认为 "GET"
- * @param {Function} options.success(userInfo) 登录成功后的回调函数，参数 userInfo 微信用户信息
- * @param {Function} options.fail(error) 登录失败后的回调函数，参数 error 错误信息
- */
-var login = function login(options) {
-    options = utils.extend({}, defaultOptions, options);
-
-    if (!defaultOptions.loginUrl) {
-        options.fail(new LoginError(constants.ERR_INVALID_PARAMS, '登录错误：缺少登录地址，请通过 setLoginUrl() 方法设置登录地址'));
-        return;
-    }
-
-    var doLogin = function doLogin() {
-        return getWxLoginResult(function (wxLoginError, wxLoginResult) {
-            if (wxLoginError) {
-                options.fail(wxLoginError);
-                return;
-            }
-
-            var userInfo = wxLoginResult.userInfo;
-
-            // 构造请求头，包含 code、encryptedData 和 iv
-            var code = wxLoginResult.code;
-            var encryptedData = wxLoginResult.encryptedData;
-            var iv = wxLoginResult.iv;
-            var header = {};
-
-            header[constants.WX_HEADER_CODE] = code;
-            header[constants.WX_HEADER_ENCRYPTED_DATA] = encryptedData;
-            header[constants.WX_HEADER_IV] = iv;
-
-            // 请求服务器登录地址，获得会话信息
-            wx.request({
-                url: options.loginUrl,
-                header: header,
-                method: options.method,
-                data: options.data,
-                success: function success(result) {
-                    var data = result.data;
-
-                    // 成功地响应会话信息
-                    if (data && data.weappCode === 0 && data.data.skey) {
-                        var res = data.data;
-                        if (res.userinfo) {
-                            Session.set(res.skey);
-                            options.success(userInfo);
-                        } else {
-                            var errorMessage = '登录失败(' + data.error + ')：' + (data.message || '未知错误');
-                            var noSessionError = new LoginError(constants.ERR_LOGIN_SESSION_NOT_RECEIVED, errorMessage);
-                            options.fail(noSessionError);
-                        }
-
-                        // 没有正确响应会话信息
-                    } else {
-                        var noSessionError = new LoginError(constants.ERR_LOGIN_SESSION_NOT_RECEIVED, JSON.stringify(data));
-                        options.fail(noSessionError);
-                    }
-                },
-
-                // 响应错误
-                fail: function fail(loginResponseError) {
-                    var error = new LoginError(constants.ERR_LOGIN_FAILED, '登录失败，可能是网络错误或者服务器发生异常');
-                    options.fail(error);
-                }
-            });
-        });
-    };
-
-    var session = Session.get();
-    if (session) {
-        wx.checkSession({
-            success: function success() {
-                options.success(session.userInfo);
-            },
-
-            fail: function fail() {
-                Session.clear();
-                doLogin();
-            }
-        });
-    } else {
-        doLogin();
-    }
-};
-
-var setLoginUrl = function setLoginUrl(loginUrl) {
-    defaultOptions.loginUrl = loginUrl;
-};
-
-module.exports = {
-    LoginError: LoginError,
-    login: login,
-    setLoginUrl: setLoginUrl
-};
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var constants = __webpack_require__(1);
-var utils = __webpack_require__(9);
-var Session = __webpack_require__(4);
-var loginLib = __webpack_require__(7);
-
-var noop = function noop() {};
-
-var buildAuthHeader = function buildAuthHeader(session) {
-    var header = {};
-
-    if (session) {
-        header[constants.WX_HEADER_SKEY] = session;
-    }
-
-    return header;
-};
-
-/***
- * @class
- * 表示请求过程中发生的异常
- */
-var RequestError = function () {
-    function RequestError(type, message) {
-        Error.call(this, message);
-        this.type = type;
-        this.message = message;
-    }
-
-    RequestError.prototype = new Error();
-    RequestError.prototype.constructor = RequestError;
-
-    return RequestError;
-}();
-
-function request(options) {
-    if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== 'object') {
-        var message = '请求传参应为 object 类型，但实际传了 ' + (typeof options === 'undefined' ? 'undefined' : _typeof(options)) + ' 类型';
-        throw new RequestError(constants.ERR_INVALID_PARAMS, message);
-    }
-
-    var requireLogin = options.login;
-    var success = options.success || noop;
-    var fail = options.fail || noop;
-    var complete = options.complete || noop;
-    var originHeader = options.header || {};
-
-    // 成功回调
-    var callSuccess = function callSuccess() {
-        success.apply(null, arguments);
-        complete.apply(null, arguments);
-    };
-
-    // 失败回调
-    var callFail = function callFail(error) {
-        fail.call(null, error);
-        complete.call(null, error);
-    };
-
-    // 是否已经进行过重试
-    var hasRetried = false;
-
-    if (requireLogin) {
-        doRequestWithLogin();
-    } else {
-        doRequest();
-    }
-
-    // 登录后再请求
-    function doRequestWithLogin() {
-        loginLib.login({ success: doRequest, fail: callFail });
-    }
-
-    // 实际进行请求的方法
-    function doRequest() {
-        var authHeader = buildAuthHeader(Session.get());
-
-        wx.request(utils.extend({}, options, {
-            header: utils.extend({}, originHeader, authHeader),
-
-            success: function success(response) {
-                var data = response.data;
-
-                var error, message;
-                if (data && data.weappCode === -1) {
-                    Session.clear();
-                    // 如果是登录态无效，并且还没重试过，会尝试登录后刷新凭据重新请求
-                    if (!hasRetried) {
-                        hasRetried = true;
-                        doRequestWithLogin();
-                        return;
-                    }
-
-                    message = '登录态已过期';
-                    error = new RequestError(data.error, message);
-
-                    callFail(error);
-                    return;
-                } else {
-                    callSuccess.apply(null, arguments);
-                }
-            },
-
-            fail: callFail,
-            complete: noop
-        }));
-    };
-};
-
-module.exports = {
-    RequestError: RequestError,
-    request: request
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-
-/**
- * 拓展对象
- */
-exports.extend = function extend(target) {
-    var sources = Array.prototype.slice.call(arguments, 1);
-
-    for (var i = 0; i < sources.length; i += 1) {
-        var source = sources[i];
-        for (var key in source) {
-            if (source.hasOwnProperty(key)) {
-                target[key] = source[key];
-            }
-        }
-    }
-
-    return target;
-};
-
-/***/ }),
-/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6990,13 +6652,37 @@ var index_esm = {
 
 
 /***/ }),
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(6);
+
+
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */]);
+
+//引入wafer跟提示api
+var qcloud = __webpack_require__(2);
+var config = __webpack_require__(1);
+
+var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
+  state: {
+    tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
+    tunnelStatus: 'closed'
+  },
+  mutations: {
+    changeStatus: function changeStatus(state, status) {
+      state.tunnelStatus = status;
+    }
+  }
+});
+
+/* harmony default export */ __webpack_exports__["a"] = (store);
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports) {
 
 var formatTime = function formatTime(date) {
@@ -7059,11 +6745,327 @@ module.exports = {
 };
 
 /***/ }),
-/* 18 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var requestLib = __webpack_require__(8);
-var wxTunnel = __webpack_require__(19);
+var utils = __webpack_require__(11);
+var constants = __webpack_require__(3);
+var Session = __webpack_require__(5);
+
+/***
+ * @class
+ * 表示登录过程中发生的异常
+ */
+var LoginError = function () {
+    function LoginError(type, message) {
+        Error.call(this, message);
+        this.type = type;
+        this.message = message;
+    }
+
+    LoginError.prototype = new Error();
+    LoginError.prototype.constructor = LoginError;
+
+    return LoginError;
+}();
+
+/**
+ * 微信登录，获取 code 和 encryptData
+ */
+var getWxLoginResult = function getLoginCode(callback) {
+    wx.login({
+        success: function success(loginResult) {
+            wx.getUserInfo({
+                success: function success(userResult) {
+                    callback(null, {
+                        code: loginResult.code,
+                        encryptedData: userResult.encryptedData,
+                        iv: userResult.iv,
+                        userInfo: userResult.userInfo
+                    });
+                },
+
+                fail: function fail(userError) {
+                    var error = new LoginError(constants.ERR_WX_GET_USER_INFO, '获取微信用户信息失败，请检查网络状态');
+                    error.detail = userError;
+                    callback(error, null);
+                }
+            });
+        },
+
+        fail: function fail(loginError) {
+            var error = new LoginError(constants.ERR_WX_LOGIN_FAILED, '微信登录失败，请检查网络状态');
+            error.detail = loginError;
+            callback(error, null);
+        }
+    });
+};
+
+var noop = function noop() {};
+var defaultOptions = {
+    method: 'GET',
+    success: noop,
+    fail: noop,
+    loginUrl: null
+};
+
+/**
+ * @method
+ * 进行服务器登录，以获得登录会话
+ *
+ * @param {Object} options 登录配置
+ * @param {string} options.loginUrl 登录使用的 URL，服务器应该在这个 URL 上处理登录请求
+ * @param {string} [options.method] 请求使用的 HTTP 方法，默认为 "GET"
+ * @param {Function} options.success(userInfo) 登录成功后的回调函数，参数 userInfo 微信用户信息
+ * @param {Function} options.fail(error) 登录失败后的回调函数，参数 error 错误信息
+ */
+var login = function login(options) {
+    options = utils.extend({}, defaultOptions, options);
+
+    if (!defaultOptions.loginUrl) {
+        options.fail(new LoginError(constants.ERR_INVALID_PARAMS, '登录错误：缺少登录地址，请通过 setLoginUrl() 方法设置登录地址'));
+        return;
+    }
+
+    var doLogin = function doLogin() {
+        return getWxLoginResult(function (wxLoginError, wxLoginResult) {
+            if (wxLoginError) {
+                options.fail(wxLoginError);
+                return;
+            }
+
+            var userInfo = wxLoginResult.userInfo;
+
+            // 构造请求头，包含 code、encryptedData 和 iv
+            var code = wxLoginResult.code;
+            var encryptedData = wxLoginResult.encryptedData;
+            var iv = wxLoginResult.iv;
+            var header = {};
+
+            header[constants.WX_HEADER_CODE] = code;
+            header[constants.WX_HEADER_ENCRYPTED_DATA] = encryptedData;
+            header[constants.WX_HEADER_IV] = iv;
+
+            // 请求服务器登录地址，获得会话信息
+            wx.request({
+                url: options.loginUrl,
+                header: header,
+                method: options.method,
+                data: options.data,
+                success: function success(result) {
+                    var data = result.data;
+
+                    // 成功地响应会话信息
+                    if (data && data.weappCode === 0 && data.data.skey) {
+                        var res = data.data;
+                        if (res.userinfo) {
+                            Session.set(res.skey);
+                            options.success(userInfo);
+                        } else {
+                            var errorMessage = '登录失败(' + data.error + ')：' + (data.message || '未知错误');
+                            var noSessionError = new LoginError(constants.ERR_LOGIN_SESSION_NOT_RECEIVED, errorMessage);
+                            options.fail(noSessionError);
+                        }
+
+                        // 没有正确响应会话信息
+                    } else {
+                        var noSessionError = new LoginError(constants.ERR_LOGIN_SESSION_NOT_RECEIVED, JSON.stringify(data));
+                        options.fail(noSessionError);
+                    }
+                },
+
+                // 响应错误
+                fail: function fail(loginResponseError) {
+                    var error = new LoginError(constants.ERR_LOGIN_FAILED, '登录失败，可能是网络错误或者服务器发生异常');
+                    options.fail(error);
+                }
+            });
+        });
+    };
+
+    var session = Session.get();
+    if (session) {
+        wx.checkSession({
+            success: function success() {
+                options.success(session.userInfo);
+            },
+
+            fail: function fail() {
+                Session.clear();
+                doLogin();
+            }
+        });
+    } else {
+        doLogin();
+    }
+};
+
+var setLoginUrl = function setLoginUrl(loginUrl) {
+    defaultOptions.loginUrl = loginUrl;
+};
+
+module.exports = {
+    LoginError: LoginError,
+    login: login,
+    setLoginUrl: setLoginUrl
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var constants = __webpack_require__(3);
+var utils = __webpack_require__(11);
+var Session = __webpack_require__(5);
+var loginLib = __webpack_require__(9);
+
+var noop = function noop() {};
+
+var buildAuthHeader = function buildAuthHeader(session) {
+    var header = {};
+
+    if (session) {
+        header[constants.WX_HEADER_SKEY] = session;
+    }
+
+    return header;
+};
+
+/***
+ * @class
+ * 表示请求过程中发生的异常
+ */
+var RequestError = function () {
+    function RequestError(type, message) {
+        Error.call(this, message);
+        this.type = type;
+        this.message = message;
+    }
+
+    RequestError.prototype = new Error();
+    RequestError.prototype.constructor = RequestError;
+
+    return RequestError;
+}();
+
+function request(options) {
+    if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== 'object') {
+        var message = '请求传参应为 object 类型，但实际传了 ' + (typeof options === 'undefined' ? 'undefined' : _typeof(options)) + ' 类型';
+        throw new RequestError(constants.ERR_INVALID_PARAMS, message);
+    }
+
+    var requireLogin = options.login;
+    var success = options.success || noop;
+    var fail = options.fail || noop;
+    var complete = options.complete || noop;
+    var originHeader = options.header || {};
+
+    // 成功回调
+    var callSuccess = function callSuccess() {
+        success.apply(null, arguments);
+        complete.apply(null, arguments);
+    };
+
+    // 失败回调
+    var callFail = function callFail(error) {
+        fail.call(null, error);
+        complete.call(null, error);
+    };
+
+    // 是否已经进行过重试
+    var hasRetried = false;
+
+    if (requireLogin) {
+        doRequestWithLogin();
+    } else {
+        doRequest();
+    }
+
+    // 登录后再请求
+    function doRequestWithLogin() {
+        loginLib.login({ success: doRequest, fail: callFail });
+    }
+
+    // 实际进行请求的方法
+    function doRequest() {
+        var authHeader = buildAuthHeader(Session.get());
+
+        wx.request(utils.extend({}, options, {
+            header: utils.extend({}, originHeader, authHeader),
+
+            success: function success(response) {
+                var data = response.data;
+
+                var error, message;
+                if (data && data.weappCode === -1) {
+                    Session.clear();
+                    // 如果是登录态无效，并且还没重试过，会尝试登录后刷新凭据重新请求
+                    if (!hasRetried) {
+                        hasRetried = true;
+                        doRequestWithLogin();
+                        return;
+                    }
+
+                    message = '登录态已过期';
+                    error = new RequestError(data.error, message);
+
+                    callFail(error);
+                    return;
+                } else {
+                    callSuccess.apply(null, arguments);
+                }
+            },
+
+            fail: callFail,
+            complete: noop
+        }));
+    };
+};
+
+module.exports = {
+    RequestError: RequestError,
+    request: request
+};
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+
+/**
+ * 拓展对象
+ */
+exports.extend = function extend(target) {
+    var sources = Array.prototype.slice.call(arguments, 1);
+
+    for (var i = 0; i < sources.length; i += 1) {
+        var source = sources[i];
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key];
+            }
+        }
+    }
+
+    return target;
+};
+
+/***/ }),
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var requestLib = __webpack_require__(10);
+var wxTunnel = __webpack_require__(21);
 
 /**
  * 当前打开的信道，同一时间只能有一个信道打开
@@ -7591,7 +7593,7 @@ function Tunnel(serviceUrl) {
 module.exports = Tunnel;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /* istanbul ignore next */
@@ -7641,42 +7643,18 @@ bind();
 module.exports = { listen: listen };
 
 /***/ }),
-/* 20 */,
-/* 21 */,
 /* 22 */,
 /* 23 */,
 /* 24 */,
 /* 25 */,
 /* 26 */,
 /* 27 */,
-/* 28 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 29 */
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */
 /***/ (function(module, exports) {
 
 /**
@@ -7709,7 +7687,34 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 30 */
+/* 34 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports) {
 
 /*
@@ -7791,7 +7796,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 31 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -7810,7 +7815,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(29)
+var listToStyles = __webpack_require__(33)
 
 /*
 type StyleObject = {

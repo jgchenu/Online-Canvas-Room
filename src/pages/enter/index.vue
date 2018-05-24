@@ -29,7 +29,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   created() {
     //登陆用户
-    this.login();
+    // this.login();
   },
   onLoad(options) {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
@@ -125,6 +125,7 @@ export default {
       tunnel.on("reconnect", () => {
         console.log("WebSocket 信道重连成功");
         util.showSuccess("重连成功");
+         this.changeStatus("connected");
       });
 
       tunnel.on("error", error => {
