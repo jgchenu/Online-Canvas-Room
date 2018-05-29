@@ -26,11 +26,7 @@ var config = require("../../config");
 var util = require("../../utils/index.js");
 export default {
   mounted() {
-    // let ctx = wx.createCanvasContext("Canvas");
-    // ctx.rect(0, 0, 600, 2668);
-    // ctx.setFillStyle("white");
-    // ctx.fill();
-    // ctx.draw();
+
     //调用监听服务器返回
     // this.listenTunnel();
 
@@ -147,12 +143,7 @@ export default {
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
         this.ctx.clearRect(0, 0, this.width, this.height);
-        wx.drawCanvas({
-          canvasId: "Canvas",
-          reserve: true,
-          actions: this.ctx.getActions() // 获取绘图动作数组
-        });
-        this.ctx.clearActions();
+        this.context.draw();
         this.chosen = "pencil";
       }
     },
