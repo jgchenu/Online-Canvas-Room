@@ -1,7 +1,15 @@
 <template>
 <div class="index">
  <div class="canvas" :style="{'left':offsetX+'rpx','top':offsetY+'rpx'}"> 
-   <canvas canvas-id="Canvas" :style="{'height':height+'rpx','width':width+'rpx'}" disable-scroll="true"  @touchstart="touchStart" @touchmove="touchMove" />
+   <canvas 
+   canvas-id="Canvas" 
+   :style="{'height'
+   :height+'rpx','width'
+   :width+'rpx'}" 
+   disable-scroll="true"  
+   @touchstart="touchStart" 
+   @touchmove="touchMove"
+   @touchend="touchEnd" />
  </div> 
   <aside class="types" @click="choseType">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
@@ -18,16 +26,22 @@ var config = require("../../config");
 var util = require("../../utils/index.js");
 export default {
   mounted() {
-    let ctx = wx.createCanvasContext("Canvas");
-    ctx.rect(0, 0, 600, 2668);
-    ctx.setFillStyle("white");
-    ctx.fill();
-    ctx.draw();
+    // let ctx = wx.createCanvasContext("Canvas");
+    // ctx.rect(0, 0, 600, 2668);
+    // ctx.setFillStyle("white");
+    // ctx.fill();
+    // ctx.draw();
     //调用监听服务器返回
-    this.listenTunnel();
+    // this.listenTunnel();
+
+    this.ctx = wx.createContext();
+    this.ctx.setStrokeStyle("#000000");
+    this.ctx.setLineWidth(2);
+    this.ctx.setLineCap("round"); // 让线条圆润
   },
   data() {
     return {
+      drawArr: [],
       prevPosition: [0, 0],
       w: 2,
       red: 33,
@@ -50,48 +64,57 @@ export default {
     ...mapMutations(["changeStatus"]),
     //触摸开始事件
     touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [
-          parseInt(e.touches[0].x),
-          parseInt(e.touches[0].y)
-        ];
-        this.sendMessage();
-        // this.setTimer();
-      }
+      // if (!this.isDouble(e)) {
+      //   this.prevPosition = [
+      //     parseInt(e.touches[0].x),
+      //     parseInt(e.touches[0].y)
+      //   ];
+      //   // this.sendMessage();
+      //   // this.setTimer();
+      // }
       // else if (this.isDouble(e)) {
       //   this.gesPosition = [
       //     { x: e.touches[0].x, y: e.touches[0].y },
       //     { x: e.touches[1].x, y: e.touches[1].y }
       //   ];
       // }
+
+      this.startX = e.touches[0].x;
+      this.startY = e.touches[0].y;
+      this.begin = true;
+      this.ctx.beginPath();
     },
     //手指移动事件
     touchMove(e) {
-      let ctx = wx.createCanvasContext("Canvas");
       //判断是单手指
       if (this.chosen === "pencil" || this.chosen === "eraser") {
         if (this.chosen === "pencil") {
-          ctx.setStrokeStyle(
-            "rgb(" + this.red + ", " + this.green + ", " + this.blue + ")"
-          );
-          ctx.setLineWidth(this.w);
+          this.ctx.setStrokeStyle("#000000");
+          this.ctx.setLineWidth(2);
+          this.ctx.setLineCap("round"); // 让线条圆润
         } else if (this.chosen == "eraser") {
-          ctx.setStrokeStyle("white");
-          ctx.setLineWidth(10);
+          this.ctx.setStrokeStyle("#white");
+          this.ctx.setLineWidth(10);
+          this.ctx.setLineCap("round"); // 让线条圆润
         }
-        ctx.setLineCap("round");
-        ctx.setLineJoin("round");
-        if (!this.timer) {
-          ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
-          // this.setTimer();
+        if (this.begin) {
+          this.ctx.moveTo(this.startX, this.startY);
+          this.startX = e.touches[0].x;
+          this.startY = e.touches[0].y;
+          this.ctx.lineTo(this.startX, this.startY);
+          this.ctx.stroke();
+          this.ctx.closePath();
+          wx.drawCanvas({
+            canvasId: "Canvas",
+            reserve: true,
+            actions: this.ctx.getActions() // 获取绘图动作数组
+          });
+          this.ctx.clearActions();
+          this.drawArr.push({
+            x: this.startX,
+            y: this.startY
+          });
         }
-        ctx.lineTo(e.touches[0].x, e.touches[0].y);
-        ctx.stroke();
-        ctx.draw(true);
-        this.prevPosition = [
-          parseInt(e.touches[0].x),
-          parseInt(e.touches[0].y)
-        ];
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         this.offsetY += e.touches[0].y - this.prevPosition[1];
@@ -100,6 +123,10 @@ export default {
           parseInt(e.touches[0].y)
         ];
       }
+    },
+    touchEnd() {
+      this.drawArr = [];
+      this.begin = false;
     },
     //判断是否是单指
     isDouble({ touches }) {
@@ -113,10 +140,19 @@ export default {
     choseType({ target }) {
       this.chosen = this.types[target.id];
       if (this.chosen === "clear") {
-        let ctx = wx.createCanvasContext("Canvas");
-        ctx.clearRect(0, 0, 600, 2668);
-        ctx.setFillStyle("white");
-        ctx.draw();
+        // let ctx = wx.createCanvasContext("Canvas");
+        // ctx.clearRect(0, 0, 600, 2668);
+        // ctx.setFillStyle("white");
+        // ctx.draw();
+        // this.ctx.fillStyle = "#ffffff";
+        // this.ctx.fillRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        wx.drawCanvas({
+          canvasId: "Canvas",
+          reserve: true,
+          actions: this.ctx.getActions() // 获取绘图动作数组
+        });
+        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },
@@ -130,8 +166,8 @@ export default {
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", speak => {
-        util.showModel("信道消息", speak.word);
-        console.log("收到说话消息：", speak);
+        // util.showModel("信道消息", speak.word);
+        console.log("收到说话消息：", speak.word);
       });
     },
     /**

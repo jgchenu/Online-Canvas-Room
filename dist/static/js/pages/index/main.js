@@ -4,8 +4,8 @@ global.webpackJsonp([2],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
@@ -23,8 +23,8 @@ var __vue_scopeId__ = "data-v-566fd662"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_13_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
   __vue_styles__,
   __vue_scopeId__,
   __vue_module_identifier__
@@ -35,7 +35,7 @@ if (Component.options.functional) {console.error("[vue-loader] index.vue: functi
 
 /* hot reload */
 if (false) {(function () {
-  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
   module.hot.accept()
@@ -95,6 +95,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -103,16 +111,22 @@ var config = __webpack_require__(1);
 var util = __webpack_require__(8);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
-    var ctx = wx.createCanvasContext("Canvas");
-    ctx.rect(0, 0, 600, 2668);
-    ctx.setFillStyle("white");
-    ctx.fill();
-    ctx.draw();
+    // let ctx = wx.createCanvasContext("Canvas");
+    // ctx.rect(0, 0, 600, 2668);
+    // ctx.setFillStyle("white");
+    // ctx.fill();
+    // ctx.draw();
     //调用监听服务器返回
-    this.listenTunnel();
+    // this.listenTunnel();
+
+    this.ctx = wx.createContext();
+    this.ctx.setStrokeStyle("#000000");
+    this.ctx.setLineWidth(2);
+    this.ctx.setLineCap("round"); // 让线条圆润
   },
   data: function data() {
     return {
+      drawArr: [],
       prevPosition: [0, 0],
       w: 2,
       red: 33,
@@ -134,46 +148,67 @@ var util = __webpack_require__(8);
   methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
-        this.sendMessage();
-        // this.setTimer();
-      }
+      // if (!this.isDouble(e)) {
+      //   this.prevPosition = [
+      //     parseInt(e.touches[0].x),
+      //     parseInt(e.touches[0].y)
+      //   ];
+      //   // this.sendMessage();
+      //   // this.setTimer();
+      // }
       // else if (this.isDouble(e)) {
       //   this.gesPosition = [
       //     { x: e.touches[0].x, y: e.touches[0].y },
       //     { x: e.touches[1].x, y: e.touches[1].y }
       //   ];
       // }
+
+      this.startX = e.touches[0].x;
+      this.startY = e.touches[0].y;
+      this.begin = true;
+      this.ctx.beginPath();
     },
 
     //手指移动事件
     touchMove: function touchMove(e) {
-      var ctx = wx.createCanvasContext("Canvas");
       //判断是单手指
       if (this.chosen === "pencil" || this.chosen === "eraser") {
         if (this.chosen === "pencil") {
-          ctx.setStrokeStyle("rgb(" + this.red + ", " + this.green + ", " + this.blue + ")");
-          ctx.setLineWidth(this.w);
+          this.ctx.setStrokeStyle("#000000");
+          this.ctx.setLineWidth(2);
+          this.ctx.setLineCap("round"); // 让线条圆润
         } else if (this.chosen == "eraser") {
-          ctx.setStrokeStyle("white");
-          ctx.setLineWidth(10);
+          this.ctx.setStrokeStyle("#white");
+          this.ctx.setLineWidth(10);
+          this.ctx.setLineCap("round"); // 让线条圆润
         }
-        ctx.setLineCap("round");
-        ctx.setLineJoin("round");
-        if (!this.timer) {
-          ctx.moveTo(this.prevPosition[0], this.prevPosition[1]);
-          // this.setTimer();
+        if (this.begin) {
+          this.ctx.moveTo(this.startX, this.startY);
+          this.startX = e.touches[0].x;
+          this.startY = e.touches[0].y;
+          this.ctx.lineTo(this.startX, this.startY);
+          this.ctx.stroke();
+          this.ctx.closePath();
+          wx.drawCanvas({
+            canvasId: "Canvas",
+            reserve: true,
+            actions: this.ctx.getActions() // 获取绘图动作数组
+          });
+          this.ctx.clearActions();
+          this.drawArr.push({
+            x: this.startX,
+            y: this.startY
+          });
         }
-        ctx.lineTo(e.touches[0].x, e.touches[0].y);
-        ctx.stroke();
-        ctx.draw(true);
-        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         this.offsetY += e.touches[0].y - this.prevPosition[1];
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
+    },
+    touchEnd: function touchEnd() {
+      this.drawArr = [];
+      this.begin = false;
     },
 
     //判断是否是单指
@@ -193,10 +228,19 @@ var util = __webpack_require__(8);
 
       this.chosen = this.types[target.id];
       if (this.chosen === "clear") {
-        var ctx = wx.createCanvasContext("Canvas");
-        ctx.clearRect(0, 0, 600, 2668);
-        ctx.setFillStyle("white");
-        ctx.draw();
+        // let ctx = wx.createCanvasContext("Canvas");
+        // ctx.clearRect(0, 0, 600, 2668);
+        // ctx.setFillStyle("white");
+        // ctx.draw();
+        // this.ctx.fillStyle = "#ffffff";
+        // this.ctx.fillRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        wx.drawCanvas({
+          canvasId: "Canvas",
+          reserve: true,
+          actions: this.ctx.getActions() // 获取绘图动作数组
+        });
+        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },
@@ -213,8 +257,8 @@ var util = __webpack_require__(8);
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (speak) {
-        util.showModel("信道消息", speak.word);
-        console.log("收到说话消息：", speak);
+        // util.showModel("信道消息", speak.word);
+        console.log("收到说话消息：", speak.word);
       });
     },
 
@@ -270,7 +314,8 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
     },
     on: {
       "touchstart": _vm.touchStart,
-      "touchmove": _vm.touchMove
+      "touchmove": _vm.touchMove,
+      "touchend": _vm.touchEnd
     }
   })]), _vm._v(" "), _c('aside', {
     staticClass: "types",
@@ -300,7 +345,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
   }
 }
 

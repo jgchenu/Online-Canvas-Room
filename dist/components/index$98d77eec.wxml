@@ -1,7 +1,7 @@
 <template name="index$98d77eec">
   <view class="_div data-v-566fd662 index">
     <view class="_div data-v-566fd662 canvas" style=" {{('left:' + offsetX + 'rpx' + ';' + 'top:' + offsetY + 'rpx' + ';')}}">
-      <canvas canvas-id="Canvas" disable-scroll="true" bindtouchstart="handleProxy" bindtouchmove="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-566fd662" style=" {{('height:' + height + 'rpx' + ';' + 'width:' + width + 'rpx' + ';')}}"></canvas>
+      <canvas canvas-id="Canvas" disable-scroll="true" bindtouchstart="handleProxy" bindtouchmove="handleProxy" bindtouchend="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-566fd662" style=" {{('height:' + height + 'rpx' + ';' + 'width:' + width + 'rpx' + ';')}}"></canvas>
     </view>
     <view class="_aside data-v-566fd662 types" bindtap="handleProxy" data-eventid="{{'1'}}" data-comkey="{{$k}}">
       <view wx:key="index" key="{{index}}" class="_div data-v-566fd662 type {{[item == chosen ? 'chosen' : '']}}" id="{{index}}" wx:for="{{types}}" wx:for-index="index" wx:for-item="item"> {{item}} </view>

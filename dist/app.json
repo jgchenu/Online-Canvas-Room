@@ -1,8 +1,8 @@
 {
   "pages": [
-    "pages/loginButton/main",
+    "pages/index/main",
     "pages/enter/main",
-    "pages/index/main"
+    "pages/loginButton/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
