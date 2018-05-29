@@ -111,11 +111,6 @@ var config = __webpack_require__(1);
 var util = __webpack_require__(8);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
-    // let ctx = wx.createCanvasContext("Canvas");
-    // ctx.rect(0, 0, 600, 2668);
-    // ctx.setFillStyle("white");
-    // ctx.fill();
-    // ctx.draw();
     //调用监听服务器返回
     // this.listenTunnel();
 
@@ -132,15 +127,16 @@ var util = __webpack_require__(8);
       red: 33,
       green: 33,
       blue: 33,
-      location: [0, 0],
-      gesPosition: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
+      startX: 0,
+      startY: 0,
       height: 1334,
       width: 600,
       offsetX: 0,
       offsetY: 0,
       timer: null,
       types: ["pencil", "move", "eraser", "clear"],
-      chosen: "pencil"
+      chosen: "pencil",
+      time: 0
     };
   },
 
@@ -148,20 +144,11 @@ var util = __webpack_require__(8);
   methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
-      // if (!this.isDouble(e)) {
-      //   this.prevPosition = [
-      //     parseInt(e.touches[0].x),
-      //     parseInt(e.touches[0].y)
-      //   ];
-      //   // this.sendMessage();
-      //   // this.setTimer();
-      // }
-      // else if (this.isDouble(e)) {
-      //   this.gesPosition = [
-      //     { x: e.touches[0].x, y: e.touches[0].y },
-      //     { x: e.touches[1].x, y: e.touches[1].y }
-      //   ];
-      // }
+      if (!this.isDouble(e)) {
+        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+        // this.sendMessage();
+        // this.setTimer();
+      }
 
       this.startX = e.touches[0].x;
       this.startY = e.touches[0].y;
@@ -178,7 +165,7 @@ var util = __webpack_require__(8);
           this.ctx.setLineWidth(2);
           this.ctx.setLineCap("round"); // 让线条圆润
         } else if (this.chosen == "eraser") {
-          this.ctx.setStrokeStyle("#white");
+          this.ctx.setStrokeStyle("#ffffff");
           this.ctx.setLineWidth(10);
           this.ctx.setLineCap("round"); // 让线条圆润
         }
@@ -189,12 +176,17 @@ var util = __webpack_require__(8);
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
-          wx.drawCanvas({
-            canvasId: "Canvas",
-            reserve: true,
-            actions: this.ctx.getActions() // 获取绘图动作数组
-          });
-          this.ctx.clearActions();
+          this.time++;
+          if (this.time === 3) {
+            wx.drawCanvas({
+              canvasId: "Canvas",
+              reserve: true,
+              actions: this.ctx.getActions() // 获取绘图动作数组
+            });
+            this.ctx.clearActions();
+            this.time = 0;
+          }
+
           this.drawArr.push({
             x: this.startX,
             y: this.startY
@@ -234,6 +226,7 @@ var util = __webpack_require__(8);
         // ctx.draw();
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
+        this.ctx.setFillStyle("white");
         this.ctx.clearRect(0, 0, this.width, this.height);
         wx.drawCanvas({
           canvasId: "Canvas",
