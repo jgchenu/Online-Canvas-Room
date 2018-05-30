@@ -9,32 +9,46 @@
 export default {
   methods: {
     onGetUserinfo(e) {
-      //   console.log(e.detail.errMsg);
-      //   console.log(e.detail.userInfo);
-      //   console.log(e.detail.rawData);
-      console.log(e);
-      wx.openSetting({success:(res)=>{console.log(res);}});
-      // wx.navigateTo({
-      //   url: "../enter/main"
-      // });
+      let msg = e.target.errMsg;
+      wx.openSetting({
+        success: res => {
+          console.log(res);
+        }
+      });
+      if (msg === "getUserInfo:ok") {
+        wx.navigateTo({
+          url: "../enter/main"
+        });
+      } else {
+        new Promise((resolve, reject) => {
+          util.showTip("友情提示", "需要授权获取信息才能进行使用~");
+          resolve();
+        }).then(() => {
+          wx.openSetting({
+            success: res => {
+              console.log(res);
+            }
+          });
+        });
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.loginPage{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .loginButton{
-        margin-top: 400rpx;
-        width: 200rpx;
-        height: 100rpx;
-    }
+.loginPage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .loginButton {
+    margin-top: 400rpx;
+    width: 200rpx;
+    height: 100rpx;
+  }
 }
 </style>
 
