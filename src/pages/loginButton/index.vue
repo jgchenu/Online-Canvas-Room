@@ -10,11 +10,11 @@ export default {
   methods: {
     onGetUserinfo(e) {
       let msg = e.target.errMsg;
-      wx.openSetting({
-        success: res => {
-          console.log(res);
-        }
-      });
+      // wx.openSetting({
+      //   success: res => {
+      //     console.log(res);
+      //   }
+      // });
       if (msg === "getUserInfo:ok") {
         wx.navigateTo({
           url: "../enter/main"

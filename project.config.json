@@ -10,7 +10,7 @@
 	"miniprogramRoot": "./dist/",
 	"compileType": "miniprogram",
 	"appid": "wxc84d60761533cb1e",
-	"projectname": "socket%E7%94%BB%E5%B8%83",
+	"projectname": "%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%AB%98%E6%A0%A1%E6%AF%94%E8%B5%9B",
 	"condition": {
 		"search": {
 			"current": -1,

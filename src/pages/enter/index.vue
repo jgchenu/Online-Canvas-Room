@@ -27,14 +27,11 @@ var util = require("../../utils/index.js");
 import store from "../vuex/store.js";
 import { mapState, mapMutations } from "vuex";
 export default {
-  created() {
-    //登陆用户
-    // this.login();
-  },
   onLoad(options) {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
-    var scene = decodeURIComponent(options.scene);
-    console.log(scene);
+    // var scene = decodeURIComponent(options.scene);
+    // console.log(scene);
+    this.login();
   },
   data() {
     return {

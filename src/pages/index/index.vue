@@ -92,15 +92,14 @@ export default {
           this.ctx.stroke();
           this.ctx.closePath();
           this.time++;
-          if (this.time === 3) {
-            wx.drawCanvas({
-              canvasId: "Canvas",
-              reserve: true,
-              actions: this.ctx.getActions() // 获取绘图动作数组
-            });
-            this.ctx.clearActions();
-            this.time = 0;
-          }
+
+          wx.drawCanvas({
+            canvasId: "Canvas",
+            reserve: true,
+            actions: this.ctx.getActions() // 获取绘图动作数组
+          });
+          this.ctx.clearActions();
+          this.time = 0;
 
           this.drawArr.push({
             x: this.startX,
