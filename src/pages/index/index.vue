@@ -9,7 +9,8 @@
    disable-scroll="true"  
    @touchstart="touchStart" 
    @touchmove="touchMove"
-   @touchend="touchEnd" />
+   @touchend="touchEnd"
+   :ref="'canvas'"/>
  </div> 
   <aside class="types" @click="choseType">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
@@ -28,7 +29,6 @@ export default {
   mounted() {
     //调用监听服务器返回
     // this.listenTunnel();
-
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
@@ -60,47 +60,48 @@ export default {
     ...mapMutations(["changeStatus"]),
     //触摸开始事件
     touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+      let x = ~~(0.5 + e.touches[0].x);
+      let y = ~~(e.touches[0].y + 0.5);
+      if (this.chosen === "move") {
+        this.prevPosition = [x, y];
         // this.sendMessage();
         // this.setTimer();
+      } else {
+        this.startX = x;
+        this.startY = y;
+        this.begin = true;
+        this.ctx.beginPath();
       }
-
-      this.startX = e.touches[0].x;
-      this.startY = e.touches[0].y;
-      this.begin = true;
-      this.ctx.beginPath();
     },
     //手指移动事件
     touchMove(e) {
+      let x = ~~(0.5 + e.touches[0].x);
+      let y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
       if (this.chosen === "pencil" || this.chosen === "eraser") {
         if (this.chosen === "pencil") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(2);
-          this.ctx.setLineCap("round"); // 让线条圆润
+          this.ctx.setLineWidth(1);
         } else if (this.chosen == "eraser") {
           this.ctx.setStrokeStyle("#ffffff");
           this.ctx.setLineWidth(10);
-          this.ctx.setLineCap("round"); // 让线条圆润
         }
+        this.ctx.setLineCap("round"); // 让线条圆润
         if (this.begin) {
           this.ctx.moveTo(this.startX, this.startY);
-          this.startX = e.touches[0].x;
-          this.startY = e.touches[0].y;
+          this.startX = x;
+          this.startY = y;
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
-          this.time++;
 
           wx.drawCanvas({
             canvasId: "Canvas",
             reserve: true,
             actions: this.ctx.getActions() // 获取绘图动作数组
           });
-          this.ctx.clearActions();
-          this.time = 0;
 
+          this.ctx.clearActions();
           this.drawArr.push({
             x: this.startX,
             y: this.startY
@@ -109,23 +110,12 @@ export default {
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         this.offsetY += e.touches[0].y - this.prevPosition[1];
-        this.prevPosition = [
-          parseInt(e.touches[0].x),
-          parseInt(e.touches[0].y)
-        ];
+        this.prevPosition = [x, y];
       }
     },
     touchEnd() {
       this.drawArr = [];
       this.begin = false;
-    },
-    //判断是否是单指
-    isDouble({ touches }) {
-      if (touches.length === 1) {
-        return false;
-      } else {
-        return true;
-      }
     },
     //选择动作类型
     choseType({ target }) {
@@ -137,14 +127,20 @@ export default {
         // ctx.draw();
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.setFillStyle("white");
-        this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // this.ctx.setFillStyle("white");
+        // this.ctx.clearRect(0, 0, this.width, this.height);
+        // wx.drawCanvas({
+        //   canvasId: "Canvas",
+        //   reserve: true,
+        //   actions: this.ctx.getActions() // 获取绘图动作数组
+        // });
+        // this.ctx.clearActions();
         wx.drawCanvas({
           canvasId: "Canvas",
-          reserve: true,
-          actions: this.ctx.getActions() // 获取绘图动作数组
+          reserve: false,
+          actions: [] // 获取绘图动作数组
         });
-        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },

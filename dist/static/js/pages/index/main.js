@@ -4,8 +4,8 @@ global.webpackJsonp([2],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
@@ -23,8 +23,8 @@ var __vue_scopeId__ = "data-v-566fd662"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
   __vue_styles__,
   __vue_scopeId__,
   __vue_module_identifier__
@@ -35,7 +35,7 @@ if (Component.options.functional) {console.error("[vue-loader] index.vue: functi
 
 /* hot reload */
 if (false) {(function () {
-  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
   module.hot.accept()
@@ -103,6 +103,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -113,7 +114,6 @@ var util = __webpack_require__(8);
   mounted: function mounted() {
     //调用监听服务器返回
     // this.listenTunnel();
-
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
@@ -144,48 +144,49 @@ var util = __webpack_require__(8);
   methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
+      var x = ~~(0.5 + e.touches[0].x);
+      var y = ~~(e.touches[0].y + 0.5);
+      if (this.chosen === "move") {
+        this.prevPosition = [x, y];
         // this.sendMessage();
         // this.setTimer();
+      } else {
+        this.startX = x;
+        this.startY = y;
+        this.begin = true;
+        this.ctx.beginPath();
       }
-
-      this.startX = e.touches[0].x;
-      this.startY = e.touches[0].y;
-      this.begin = true;
-      this.ctx.beginPath();
     },
 
     //手指移动事件
     touchMove: function touchMove(e) {
+      var x = ~~(0.5 + e.touches[0].x);
+      var y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
       if (this.chosen === "pencil" || this.chosen === "eraser") {
         if (this.chosen === "pencil") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(2);
-          this.ctx.setLineCap("round"); // 让线条圆润
+          this.ctx.setLineWidth(1);
         } else if (this.chosen == "eraser") {
           this.ctx.setStrokeStyle("#ffffff");
           this.ctx.setLineWidth(10);
-          this.ctx.setLineCap("round"); // 让线条圆润
         }
+        this.ctx.setLineCap("round"); // 让线条圆润
         if (this.begin) {
           this.ctx.moveTo(this.startX, this.startY);
-          this.startX = e.touches[0].x;
-          this.startY = e.touches[0].y;
+          this.startX = x;
+          this.startY = y;
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
-          this.time++;
 
           wx.drawCanvas({
             canvasId: "Canvas",
             reserve: true,
             actions: this.ctx.getActions() // 获取绘图动作数组
           });
-          this.ctx.clearActions();
-          this.time = 0;
 
+          this.ctx.clearActions();
           this.drawArr.push({
             x: this.startX,
             y: this.startY
@@ -194,7 +195,7 @@ var util = __webpack_require__(8);
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         this.offsetY += e.touches[0].y - this.prevPosition[1];
-        this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
+        this.prevPosition = [x, y];
       }
     },
     touchEnd: function touchEnd() {
@@ -202,20 +203,9 @@ var util = __webpack_require__(8);
       this.begin = false;
     },
 
-    //判断是否是单指
-    isDouble: function isDouble(_ref) {
-      var touches = _ref.touches;
-
-      if (touches.length === 1) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-
     //选择动作类型
-    choseType: function choseType(_ref2) {
-      var target = _ref2.target;
+    choseType: function choseType(_ref) {
+      var target = _ref.target;
 
       this.chosen = this.types[target.id];
       if (this.chosen === "clear") {
@@ -225,14 +215,20 @@ var util = __webpack_require__(8);
         // ctx.draw();
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.setFillStyle("white");
-        this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // this.ctx.setFillStyle("white");
+        // this.ctx.clearRect(0, 0, this.width, this.height);
+        // wx.drawCanvas({
+        //   canvasId: "Canvas",
+        //   reserve: true,
+        //   actions: this.ctx.getActions() // 获取绘图动作数组
+        // });
+        // this.ctx.clearActions();
         wx.drawCanvas({
           canvasId: "Canvas",
-          reserve: true,
-          actions: this.ctx.getActions() // 获取绘图动作数组
+          reserve: false,
+          actions: [] // 获取绘图动作数组
         });
-        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },
@@ -295,6 +291,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       'top': _vm.offsetY + 'rpx'
     })
   }, [_c('canvas', {
+    ref: 'canvas',
     style: ({
       'height': _vm.height + 'rpx',
       'width': _vm.width + 'rpx'
@@ -337,7 +334,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
   }
 }
 
