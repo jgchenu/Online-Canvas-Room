@@ -8,13 +8,13 @@
     <footer
       class="newRoom room"
       @click="newRoom"
-      v-if="tunnelStatus==='closed'"
+      v-if="'closed'"
       >新建房间
     </footer>
     <footer
       class="newRoom room"
       @click="closeTunnel"
-      v-else-if="tunnelStatus==='connected'"
+      v-else-if="'connected'"
       >关闭房间
     </footer>
     
@@ -31,7 +31,8 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     // console.log(scene);
-    this.login();
+    this.openTunnel();
+    this.listenTunnel();
   },
   data() {
     return {
@@ -43,67 +44,40 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["changeStatus"]),
+    ...mapMutations(["changeStatus", "changeRoomStatus"]),
+    sendMessage(type, msg = {}) {
+      if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
+
+      // 使用 tunnel.isActive() 来检测当前信道是否处于可用状态
+      if (this.tunnel && this.tunnel.isActive()) {
+        // 使用信道给服务器推送「speak」消息
+        this.tunnel.emit(type, msg);
+      }
+    },
     enterRoom() {
       if (this.tunnelStatus === "connected") {
         wx.navigateTo({
           url: "../index/main"
         });
-      }else{
-        util.showTip('友情提示','请先建立房间才能进入房间')
+      } else {
+        util.showTip("友情提示", "请先建立房间才能进入房间");
       }
     },
     newRoom() {
-      this.openTunnel();
-    },
-    login() {
-      console.log(config.service.requestUrl);
-      if (this.logged) return;
-
-      util.showBusy("正在登录");
-      var that = this;
-
-      // 调用登录接口
-      qcloud.login({
-        success(result) {
-          if (result) {
-            util.showSuccess("登录成功");
-            that.userInfo = result;
-            that.logged = true;
-          } else {
-            // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
-            qcloud.request({
-              url: config.service.requestUrl,
-              login: true,
-              success(result) {
-                util.showSuccess("登录成功");
-                that.userInfo = result.data.data;
-                console.log(that.userInfo);
-                that.logged = true;
-              },
-              fail(error) {
-                util.showModel("请求失败", error);
-                console.log("request fail", error);
-              }
-            });
-          }
-        },
-
-        fail(error) {
-          util.showModel("登录失败", error);
-          console.log("登录失败", error);
-        }
+      this.sendMessage("speak", {
+        room_id: 1,
+        data: { type: 1, data: { type1: [1, 2] } }
       });
     },
     //信道连接跟监听
     openTunnel() {
-      util.showBusy("房间建立中...");
+      util.showBusy("正在登录");
       // 创建信道，需要给定后台服务地址
       var tunnel = this.tunnel;
       // 监听信道内置消息，包括 connect/close/reconnecting/reconnect/error
       tunnel.on("connect", () => {
-        this.members.push({ imgUrl: this.userInfo.avatarUrl });
-        util.showSuccess("房间已经建立");
+        // this.members.push({ imgUrl: this.userInfo.avatarUrl });
+        util.showSuccess("登录成功");
         console.log("WebSocket 信道已连接");
         this.changeStatus("connected");
       });
@@ -122,7 +96,7 @@ export default {
       tunnel.on("reconnect", () => {
         console.log("WebSocket 信道重连成功");
         util.showSuccess("重连成功");
-         this.changeStatus("connected");
+        this.changeStatus("connected");
       });
 
       tunnel.on("error", error => {
@@ -132,10 +106,19 @@ export default {
       tunnel.open();
       this.changeStatus("connecting");
     },
-
-    /**
-     * 点击「关闭信道」按钮，关闭已经打开的信道
-     */
+    listenTunnel() {
+      var tunnel = this.tunnel;
+      tunnel.on("speak", data => {
+        console.log("speak:", data);
+      });
+      tunnel.on("create", data => {
+        console.log("create:", data);
+      });
+      tunnel.on("errmsg", data => {
+        console.log("errmsg:", data);
+      });
+    },
+    //  点击「关闭信道」按钮，关闭已经打开的信道
     closeTunnel() {
       if (this.tunnel) {
         util.showBusy("房间关闭中...");
@@ -144,6 +127,42 @@ export default {
       util.showSuccess("房间已关闭");
       this.members = [];
       this.changeStatus("closed");
+    },
+    login() {
+      console.log(config.service.requestUrl);
+      if (this.logged) return;
+      util.showBusy("正在登录");
+      var that = this;
+      // 调用登录接口
+      qcloud.login({
+        success(result) {
+          if (result) {
+            util.showSuccess("登录成功");
+            that.userInfo = result;
+            that.logged = true;
+          } else {
+            // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
+            qcloud.request({
+              url: config.service.requestUrl,
+              login: true,
+              success(result) {
+                util.showSuccess("登录成功");
+                // that.userInfo = result.data.data;
+                console.log(that.userInfo);
+                that.logged = true;
+              },
+              fail(error) {
+                util.showModel("请求失败", error);
+                console.log("request fail", error);
+              }
+            });
+          }
+        },
+        fail(error) {
+          util.showModel("登录失败", error);
+          console.log("登录失败", error);
+        }
+      });
     }
   },
   computed: {

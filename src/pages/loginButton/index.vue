@@ -1,20 +1,16 @@
 <template>
     <div class="loginPage">
-            <button @getuserinfo="onGetUserinfo" open-type="getUserInfo" class="loginButton">用户授权</button>
+            <button @getuserinfo="onGetUserInfo" open-type="getUserInfo" class="loginButton">用户授权</button>
             
     </div>
 </template>
 
 <script>
+var util = require("../../utils/index.js");
 export default {
   methods: {
-    onGetUserinfo(e) {
+    onGetUserInfo(e) {
       let msg = e.target.errMsg;
-      // wx.openSetting({
-      //   success: res => {
-      //     console.log(res);
-      //   }
-      // });
       if (msg === "getUserInfo:ok") {
         wx.navigateTo({
           url: "../enter/main"

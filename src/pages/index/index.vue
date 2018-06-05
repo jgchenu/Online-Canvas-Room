@@ -28,7 +28,6 @@ export default {
   mounted() {
     //调用监听服务器返回
     // this.listenTunnel();
-
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
@@ -44,8 +43,8 @@ export default {
       blue: 33,
       startX: 0,
       startY: 0,
-      height: 1334,
-      width: 600,
+      height: 1000,
+      width: 720,
       offsetX: 0,
       offsetY: 0,
       timer: null,
@@ -57,7 +56,7 @@ export default {
   components: {},
   methods: {
     //映射
-    ...mapMutations(["changeStatus"]),
+    ...mapMutations(["changeStatus", "changeRoomStatus"]),
     //触摸开始事件
     touchStart(e) {
       if (!this.isDouble(e)) {
@@ -107,8 +106,12 @@ export default {
           });
         }
       } else if (this.chosen === "move") {
+        // if (this.offsetY>=0) {
+        //   console.log(this.offsetY)
+        //     return
+        // }
         this.offsetX += e.touches[0].x - this.prevPosition[0];
-        this.offsetY += e.touches[0].y - this.prevPosition[1];
+        // this.offsetY += e.touches[0].y - this.prevPosition[1];
         this.prevPosition = [
           parseInt(e.touches[0].x),
           parseInt(e.touches[0].y)
@@ -137,14 +140,20 @@ export default {
         // ctx.draw();
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.setFillStyle("white");
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        // this.ctx.setFillStyle("white");
+        // this.ctx.clearRect(0, 0, this.width, this.height);
+        // wx.drawCanvas({
+        //   canvasId: "Canvas",
+        //   reserve: true,
+        //   actions: this.ctx.getActions() // 获取绘图动作数组
+        // });
+        // this.ctx.clearActions();
+        // this.chosen = "pencil";
         wx.drawCanvas({
           canvasId: "Canvas",
-          reserve: true,
-          actions: this.ctx.getActions() // 获取绘图动作数组
+          reserve: false,
+          actions: [] // 获取绘图动作数组
         });
-        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },
@@ -180,7 +189,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "tunnelStatus"])
+    ...mapState(["tunnel", "tunnelStatus", "roomState"])
   },
   store
 };

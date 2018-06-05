@@ -79,8 +79,8 @@ app.$mount();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(7);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -108,12 +108,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var qcloud = __webpack_require__(2);
 var config = __webpack_require__(1);
-var util = __webpack_require__(8);
+var util = __webpack_require__(5);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
     //调用监听服务器返回
     // this.listenTunnel();
-
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
@@ -129,8 +128,8 @@ var util = __webpack_require__(8);
       blue: 33,
       startX: 0,
       startY: 0,
-      height: 1334,
-      width: 600,
+      height: 1000,
+      width: 720,
       offsetX: 0,
       offsetY: 0,
       timer: null,
@@ -141,7 +140,7 @@ var util = __webpack_require__(8);
   },
 
   components: {},
-  methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus"]), {
+  methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus", "changeRoomStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
       if (!this.isDouble(e)) {
@@ -192,8 +191,12 @@ var util = __webpack_require__(8);
           });
         }
       } else if (this.chosen === "move") {
+        // if (this.offsetY>=0) {
+        //   console.log(this.offsetY)
+        //     return
+        // }
         this.offsetX += e.touches[0].x - this.prevPosition[0];
-        this.offsetY += e.touches[0].y - this.prevPosition[1];
+        // this.offsetY += e.touches[0].y - this.prevPosition[1];
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
     },
@@ -225,14 +228,20 @@ var util = __webpack_require__(8);
         // ctx.draw();
         // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.setFillStyle("white");
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        // this.ctx.setFillStyle("white");
+        // this.ctx.clearRect(0, 0, this.width, this.height);
+        // wx.drawCanvas({
+        //   canvasId: "Canvas",
+        //   reserve: true,
+        //   actions: this.ctx.getActions() // 获取绘图动作数组
+        // });
+        // this.ctx.clearActions();
+        // this.chosen = "pencil";
         wx.drawCanvas({
           canvasId: "Canvas",
-          reserve: true,
-          actions: this.ctx.getActions() // 获取绘图动作数组
+          reserve: false,
+          actions: [] // 获取绘图动作数组
         });
-        this.ctx.clearActions();
         this.chosen = "pencil";
       }
     },
@@ -268,7 +277,7 @@ var util = __webpack_require__(8);
       }
     }
   }),
-  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "tunnelStatus"])),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "tunnelStatus", "roomState"])),
   store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 

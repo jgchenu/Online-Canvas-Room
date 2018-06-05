@@ -5587,7 +5587,7 @@ module.exports = config;
 
 var constants = __webpack_require__(3);
 var login = __webpack_require__(9);
-var Session = __webpack_require__(5);
+var Session = __webpack_require__(6);
 var request = __webpack_require__(10);
 var Tunnel = __webpack_require__(20);
 
@@ -5732,6 +5732,69 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+var formatTime = function formatTime(date) {
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  var hour = date.getHours();
+  var minute = date.getMinutes();
+  var second = date.getSeconds();
+
+  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':');
+};
+
+var formatNumber = function formatNumber(n) {
+  n = n.toString();
+  return n[1] ? n : '0' + n;
+};
+
+// 显示繁忙提示
+var showBusy = function showBusy(text) {
+  return wx.showToast({
+    title: text,
+    icon: 'loading',
+    duration: 1000
+  });
+};
+
+// 显示成功提示
+var showSuccess = function showSuccess(text) {
+  return wx.showToast({
+    title: text,
+    icon: 'success'
+  });
+};
+
+// 显示失败提示
+var showModel = function showModel(title, content) {
+  wx.hideToast();
+  wx.showModal({
+    title: title,
+    content: JSON.stringify(content),
+    showCancel: false
+  });
+};
+var showTip = function showTip(title, content) {
+  wx.hideToast();
+  wx.showModal({
+    title: title,
+    content: content,
+    showCancel: false
+  });
+};
+
+module.exports = {
+  formatTime: formatTime,
+  showBusy: showBusy,
+  showSuccess: showSuccess,
+  showModel: showModel,
+  showTip: showTip
+};
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var constants = __webpack_require__(3);
@@ -5754,7 +5817,7 @@ var Session = {
 module.exports = Session;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6699,13 +6762,13 @@ var index_esm = {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(7);
 
 
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */]);
@@ -6717,79 +6780,21 @@ var config = __webpack_require__(1);
 var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
   state: {
     tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
-    tunnelStatus: 'closed'
+    tunnelStatus: 'closed',
+    roomState: 'none'
   },
   mutations: {
     changeStatus: function changeStatus(state, status) {
       state.tunnelStatus = status;
+    },
+    changeRoomStatus: function changeRoomStatus(state, status) {
+      state.roomState = status;
     }
+
   }
 });
 
 /* harmony default export */ __webpack_exports__["a"] = (store);
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-var formatTime = function formatTime(date) {
-  var year = date.getFullYear();
-  var month = date.getMonth() + 1;
-  var day = date.getDate();
-  var hour = date.getHours();
-  var minute = date.getMinutes();
-  var second = date.getSeconds();
-
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':');
-};
-
-var formatNumber = function formatNumber(n) {
-  n = n.toString();
-  return n[1] ? n : '0' + n;
-};
-
-// 显示繁忙提示
-var showBusy = function showBusy(text) {
-  return wx.showToast({
-    title: text,
-    icon: 'loading',
-    duration: 1000
-  });
-};
-
-// 显示成功提示
-var showSuccess = function showSuccess(text) {
-  return wx.showToast({
-    title: text,
-    icon: 'success'
-  });
-};
-
-// 显示失败提示
-var showModel = function showModel(title, content) {
-  wx.hideToast();
-  wx.showModal({
-    title: title,
-    content: JSON.stringify(content),
-    showCancel: false
-  });
-};
-var showTip = function showTip(title, content) {
-  wx.hideToast();
-  wx.showModal({
-    title: title,
-    content: content,
-    showCancel: false
-  });
-};
-
-module.exports = {
-  formatTime: formatTime,
-  showBusy: showBusy,
-  showSuccess: showSuccess,
-  showModel: showModel,
-  showTip: showTip
-};
 
 /***/ }),
 /* 9 */
@@ -6797,7 +6802,7 @@ module.exports = {
 
 var utils = __webpack_require__(11);
 var constants = __webpack_require__(3);
-var Session = __webpack_require__(5);
+var Session = __webpack_require__(6);
 
 /***
  * @class
@@ -6965,7 +6970,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var constants = __webpack_require__(3);
 var utils = __webpack_require__(11);
-var Session = __webpack_require__(5);
+var Session = __webpack_require__(6);
 var loginLib = __webpack_require__(9);
 
 var noop = function noop() {};

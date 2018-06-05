@@ -11,11 +11,16 @@ const store = new Vuex.Store({
   state: {
     tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
     tunnelStatus: 'closed',
+    roomState: 'none'
   },
   mutations: {
     changeStatus: (state, status) => {
       state.tunnelStatus = status
+    },
+    changeRoomStatus: (state, status) => {
+      state.roomState = status
     }
+
   }
 })
 

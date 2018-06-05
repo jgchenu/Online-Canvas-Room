@@ -8,17 +8,27 @@ page .canvas.data-v-566fd662 {
   position: absolute;
   border: 2rpx solid #000;
   z-index: 2;
+  border-radius: 20rpx;
 }
 page .types.data-v-566fd662 {
+  width: 100%;
   position: fixed;
-  right: 0;
-  top: 0;
+  display: flex;
+  flex-direction: row;
+  left: 0;
+  bottom: 0;
   z-index: 99999999;
+  color: #bbb;
 }
 page .types .type.data-v-566fd662 {
-  width: 140rpx;
+  flex: 1;
+  display: inline-block;
   height: 100rpx;
+  line-height: 100rpx;
+  text-align: center;
 }
 page .types .chosen.data-v-566fd662 {
   color: aqua;
+  border-bottom: 4rpx solid #000;
+  color: #000;
 }
