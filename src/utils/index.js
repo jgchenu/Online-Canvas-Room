@@ -37,7 +37,7 @@ var showModel = (title, content) => {
     showCancel: false
   })
 }
-var showTip = (title, content) => {
+var showTip = (title = "提示", content) => {
   wx.hideToast();
   wx.showModal({
     title,

@@ -79,8 +79,8 @@ app.$mount();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(6);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -108,15 +108,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var qcloud = __webpack_require__(2);
 var config = __webpack_require__(1);
-var util = __webpack_require__(5);
+var util = __webpack_require__(8);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
     //调用监听服务器返回
-    // this.listenTunnel();
+    this.listenTunnel();
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
     this.ctx.setLineCap("round"); // 让线条圆润
+  },
+  onLoad: function onLoad(option) {
+    this.roomId = option.id;
+    console.log(option.id);
+    // this.sendMessage('speak',{'room-id':this.roomId,type:1})
   },
   data: function data() {
     return {
@@ -128,14 +133,15 @@ var util = __webpack_require__(5);
       blue: 33,
       startX: 0,
       startY: 0,
-      height: 1000,
+      height: 1100,
       width: 720,
       offsetX: 0,
       offsetY: 0,
       timer: null,
-      types: ["pencil", "move", "eraser", "clear"],
-      chosen: "pencil",
-      time: 0
+      types: ["draw", "move", "eraser", "clear"],
+      chosen: "draw",
+      time: 0,
+      roomId: ""
     };
   },
 
@@ -143,23 +149,22 @@ var util = __webpack_require__(5);
   methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus", "changeRoomStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
-      if (!this.isDouble(e)) {
-        this.prevPosition = [e.touches[0].x, e.touches[0].y];
-        // this.sendMessage();
-        // this.setTimer();
-      }
-
+      this.prevPosition = [e.touches[0].x, e.touches[0].y];
       this.startX = e.touches[0].x;
       this.startY = e.touches[0].y;
       this.begin = true;
       this.ctx.beginPath();
+      this.drawArr.push({
+        x: this.startX,
+        y: this.startY
+      });
     },
 
     //手指移动事件
     touchMove: function touchMove(e) {
       //判断是单手指
-      if (this.chosen === "pencil" || this.chosen === "eraser") {
-        if (this.chosen === "pencil") {
+      if (this.chosen === "draw" || this.chosen === "eraser") {
+        if (this.chosen === "draw") {
           this.ctx.setStrokeStyle("#000000");
           this.ctx.setLineWidth(2);
           this.ctx.setLineCap("round"); // 让线条圆润
@@ -175,32 +180,67 @@ var util = __webpack_require__(5);
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
-          this.time++;
-
           wx.drawCanvas({
             canvasId: "Canvas",
             reserve: true,
             actions: this.ctx.getActions() // 获取绘图动作数组
           });
           this.ctx.clearActions();
-          this.time = 0;
-
           this.drawArr.push({
             x: this.startX,
             y: this.startY
           });
         }
       } else if (this.chosen === "move") {
-        // if (this.offsetY>=0) {
-        //   console.log(this.offsetY)
-        //     return
-        // }
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         // this.offsetY += e.touches[0].y - this.prevPosition[1];
         this.prevPosition = [parseInt(e.touches[0].x), parseInt(e.touches[0].y)];
       }
     },
     touchEnd: function touchEnd() {
+      if (this.choseType === "draw") {
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 1,
+          data: {
+            type: 1,
+            data: {
+              drawArr: this.drawArr
+            }
+          }
+        });
+      } else if (this.choseType === "move") {
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 1,
+          data: {
+            type: 2,
+            data: {
+              offsetX: this.offsetX
+            }
+          }
+        });
+      } else if (this.choseType === "eraser") {
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 1,
+          data: {
+            type: 3,
+            data: {
+              drawArr: this.drawArr
+            }
+          }
+        });
+      } else if (this.choseType === "clear") {
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 2,
+          data: {
+            type: 4
+          }
+        });
+      }
+
       this.drawArr = [];
       this.begin = false;
     },
@@ -222,11 +262,6 @@ var util = __webpack_require__(5);
 
       this.chosen = this.types[target.id];
       if (this.chosen === "clear") {
-        // let ctx = wx.createCanvasContext("Canvas");
-        // ctx.clearRect(0, 0, 600, 2668);
-        // ctx.setFillStyle("white");
-        // ctx.draw();
-        // this.ctx.fillStyle = "#ffffff";
         // this.ctx.fillRect(0, 0, this.width, this.height);
         // this.ctx.setFillStyle("white");
         // this.ctx.clearRect(0, 0, this.width, this.height);
@@ -235,14 +270,12 @@ var util = __webpack_require__(5);
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
-        // this.ctx.clearActions();
-        // this.chosen = "pencil";
         wx.drawCanvas({
           canvasId: "Canvas",
           reserve: false,
           actions: [] // 获取绘图动作数组
         });
-        this.chosen = "pencil";
+        this.chosen = "draw";
       }
     },
 
@@ -257,27 +290,28 @@ var util = __webpack_require__(5);
     listenTunnel: function listenTunnel() {
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
-      tunnel.on("speak", function (speak) {
+      tunnel.on("speak", function (data) {
         // util.showModel("信道消息", speak.word);
-        console.log("收到说话消息：", speak.word);
+        console.log("收到说话消息：", data);
       });
     },
 
     /**
      * 点击「发送消息」按钮，测试使用信道发送消息
      */
-    sendMessage: function sendMessage() {
+    sendMessage: function sendMessage(type) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var tunnel = this.tunnel.tunnel;
+
       if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
       // 使用 tunnel.isActive() 来检测当前信道是否处于可用状态
       if (this.tunnel && this.tunnel.isActive()) {
         // 使用信道给服务器推送「speak」消息
-        this.tunnel.emit("speak", {
-          word: "I say writing start at (" + this.prevPosition[0] + "," + this.prevPosition[1] + ")"
-        });
+        this.tunnel.emit(type, data);
       }
     }
   }),
-  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "tunnelStatus", "roomState"])),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "roomState"])),
   store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 
@@ -318,7 +352,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       "touchmove": _vm.touchMove,
       "touchend": _vm.touchEnd
     }
-  })]), _vm._v(" "), _c('aside', {
+  })]), _vm._v(" "), (_vm.identity === 'created') ? _c('aside', {
     staticClass: "types",
     attrs: {
       "eventid": '1'
@@ -337,7 +371,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
         "id": index
       }
     }, [_vm._v("\r\n      " + _vm._s(item) + "\r\n    ")])
-  }))], 1)
+  })) : _vm._e()], 1)
 }
 var staticRenderFns = []
 render._withStripped = true

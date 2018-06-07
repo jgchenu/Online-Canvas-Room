@@ -19,12 +19,10 @@ page {
     color: #bbb;
     .type {
       flex: 1;
-      display: inline-block;
-    //   width: 140rpx;
+      display: inline-block; //   width: 140rpx;
       height: 100rpx;
       line-height: 100rpx;
-      text-align: center;
-    //   background: red;
+      text-align: center; //   background: red;
     }
     .chosen {
       color: aqua;
@@ -33,3 +31,4 @@ page {
     }
   }
 }
+

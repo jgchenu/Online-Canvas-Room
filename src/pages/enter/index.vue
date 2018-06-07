@@ -1,23 +1,28 @@
 <template>
   <div class="enter">
-    <img :src="userInfo.avatarUrl" alt="" class="QRcode">
-    <button class="enterRoom room" @click="enterRoom">进入房间</button>
+    <img :src="room.qrCode" alt="" class="Qrcode">
+    <button class="enterRoom room" @click="enterCanvas">进入画板</button>
     <section class="members">
-          <img v-for="(item,index) in members" :key="index" :src="item.imgUrl" />
+          <img v-for="(item,index) in room.members" :key="index" :src="item.avatarUrl" />
     </section>
     <footer
       class="newRoom room"
-      @click="newRoom"
-      v-if="'closed'"
+      @click="createRoom"
+      v-if="identity==='none'"
       >新建房间
     </footer>
     <footer
       class="newRoom room"
-      @click="closeTunnel"
-      v-else-if="'connected'"
+      @click="closeRoom"
+      v-else-if="identity==='created'"
       >关闭房间
     </footer>
-    
+        <footer
+      class="newRoom room"
+      @click="quitRoom"
+      v-else-if="identity==='join'"
+      >退出房间
+    </footer>
   </div>
 </template>
 <script>
@@ -28,56 +33,73 @@ import store from "../vuex/store.js";
 import { mapState, mapMutations } from "vuex";
 export default {
   onLoad(options) {
+    this.listenTunnel();
+    wx.getSetting({
+      success: res => {
+        if (!res.authSetting["scope.userInfo"]) {
+          wx.navigateTo({
+            url: "../loginButton/main"
+          });
+        }
+      }
+    });
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     // console.log(scene);
+    // options.id = 5;
+    // this.room.roomId = options.id;
+    if (options.id) {
+      this.changeIdentityStatus("join");
+      this.tunnel.emit("join", { "room-id": this.room.roomId });
+    }
     this.openTunnel();
-    this.listenTunnel();
   },
   data() {
     return {
-      members: [],
-      userInfo: {},
-      logged: false,
-      takeSession: false,
-      requestResult: ""
+      // userInfo: {},
+      // logged: false,
+      // takeSession: false,
+      // requestResult: "",
+      room: { qrCode: "", roomId: "", members: [] }
     };
   },
   methods: {
-    ...mapMutations(["changeStatus", "changeRoomStatus"]),
-    sendMessage(type, msg = {}) {
-      if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
-
-      // 使用 tunnel.isActive() 来检测当前信道是否处于可用状态
-      if (this.tunnel && this.tunnel.isActive()) {
-        // 使用信道给服务器推送「speak」消息
-        this.tunnel.emit(type, msg);
-      }
-    },
-    enterRoom() {
-      if (this.tunnelStatus === "connected") {
+    ...mapMutations([
+      "changeStatus",
+      "changeIdentityStatus",
+      "changeOwnerStatus"
+    ]),
+    enterCanvas() {
+      if (this.identity === "created" || this.identity === "join") {
         wx.navigateTo({
-          url: "../index/main"
+          url: `../index/main?id=${this.room.roomId}`
         });
       } else {
-        util.showTip("友情提示", "请先建立房间才能进入房间");
+        util.showTip("友情提示", "请先建立或者加入房间才能进入房间");
       }
     },
-    newRoom() {
-      this.sendMessage("speak", {
-        room_id: 1,
-        data: { type: 1, data: { type1: [1, 2] } }
-      });
+    createRoom() {
+      this.sendMessage("create");
+    },
+    closeRoom() {
+      this.sendMessage("shut", { "room-id": this.room.roomId });
+    },
+    quitRoom() {
+      this.sendMessage("leave");
     },
     //信道连接跟监听
     openTunnel() {
-      util.showBusy("正在登录");
+      util.showBusy("信道建立中...");
       // 创建信道，需要给定后台服务地址
       var tunnel = this.tunnel;
       // 监听信道内置消息，包括 connect/close/reconnecting/reconnect/error
+      tunnel.open();
+      this.changeStatus("connecting");
+    },
+    listenTunnel() {
+      var tunnel = this.tunnel;
       tunnel.on("connect", () => {
-        // this.members.push({ imgUrl: this.userInfo.avatarUrl });
-        util.showSuccess("登录成功");
+        util.showSuccess("信道建立成功");
         console.log("WebSocket 信道已连接");
         this.changeStatus("connected");
       });
@@ -98,76 +120,93 @@ export default {
         util.showSuccess("重连成功");
         this.changeStatus("connected");
       });
-
-      tunnel.on("error", error => {
-        util.showModel("信道发生错误", error);
-        console.error("信道发生错误：", error);
-      });
-      tunnel.open();
-      this.changeStatus("connecting");
-    },
-    listenTunnel() {
-      var tunnel = this.tunnel;
-      tunnel.on("speak", data => {
-        console.log("speak:", data);
-      });
-      tunnel.on("create", data => {
-        console.log("create:", data);
-      });
-      tunnel.on("errmsg", data => {
-        console.log("errmsg:", data);
-      });
-    },
-    //  点击「关闭信道」按钮，关闭已经打开的信道
-    closeTunnel() {
-      if (this.tunnel) {
-        util.showBusy("房间关闭中...");
-        this.tunnel.close();
-      }
-      util.showSuccess("房间已关闭");
-      this.members = [];
-      this.changeStatus("closed");
-    },
-    login() {
-      console.log(config.service.requestUrl);
-      if (this.logged) return;
-      util.showBusy("正在登录");
-      var that = this;
-      // 调用登录接口
-      qcloud.login({
-        success(result) {
-          if (result) {
-            util.showSuccess("登录成功");
-            that.userInfo = result;
-            that.logged = true;
-          } else {
-            // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
-            qcloud.request({
-              url: config.service.requestUrl,
-              login: true,
-              success(result) {
-                util.showSuccess("登录成功");
-                // that.userInfo = result.data.data;
-                console.log(that.userInfo);
-                that.logged = true;
-              },
-              fail(error) {
-                util.showModel("请求失败", error);
-                console.log("request fail", error);
-              }
-            });
-          }
-        },
-        fail(error) {
-          util.showModel("登录失败", error);
-          console.log("登录失败", error);
+      tunnel.on("errmsg", err => {
+        //新建房间报错
+        if (err.code === 40302) {
+          util.showSuccess("房间已经创建");
+          this.changeIdentityStatus("created");
+          this.changeOwnerStatus(true);
+        } else if (err.code === 40001) {
+          util.showTip("报错", "参数错误");
+        } else if (err.code === 40303) {
+          util.showTip("提示", "你已经有加入房间了,正在重新进入中");
+          this.sendMessage("shut", { "room-id": this.room.roomId });
+          this.room.roomId = err.room.id;
+          this.sendMessage("join", { "room-id": this.room.roomId });
         }
+        console.log(err);
       });
+      //新建房间
+      tunnel.on("create", data => {
+        this.room.qrCode = "data:image/jpeg;base64," + data.room.qrcode;
+        this.room.roomId = data.room.id;
+        console.log("create：", data);
+        util.showTip("提示", "房间创建成功");
+        this.changeIdentityStatus("created");
+        this.changeOwnerStatus(true);
+      });
+      tunnel.on("error", err => {
+        console.log("error:", err);
+      });
+      //监听用户信息
+      tunnel.on("user", data => {
+        // this.members.push({ avatarUrl: data.information.avatarUrl });
+        if (data.room && data.room.created[0]&& this.identity === "none") {
+          this.room.roomId =
+            data.room && data.room.created && data.room.created[0].id;
+          this.room.qrCode = `data:image/jpeg;base64,${
+            data.room.created[0].qrcode
+          }`;
+          this.changeIdentityStatus("created");
+          this.sendMessage("room", { "room-id": this.room.roomId });
+        }
+        console.log("user:", data);
+      });
+      //监听加入信息
+      tunnel.on("join", data => {
+        console.log("join:", data);
+        this.room.members = data.room.members;
+        this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
+        this.changeIdentityStatus("join");
+      });
+      //监听关闭房间信息
+      tunnel.on("shut", data => {
+        console.log("shut:", data);
+        this.changeIdentityStatus("none");
+        this.room.members=[];
+        this.room.roomId='';
+        this.room.qrCode='';
+        this.changeOwnerStatus(false);
+      });
+      //监听房间的信息
+      tunnel.on("room", data => {
+        console.log("room", data);
+        this.room.members = data.room.members;
+      });
+      //监听退出房间的信息
+      tunnel.on("leave", data => {
+        if (!data.id) {
+          this.room.members = [];
+          this.room.qrCode = "";
+          // util.showTip("提示", "你已经退出房间了");
+        }
+        console.log("leave:", data);
+        this.changeIdentityStatus("none");
+      });
+    },
+    sendMessage(type, data = {}) {
+      const { tunnel } = this.tunnel;
+      if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
+      // 使用 tunnel.isActive() 来检测当前信道是否处于可用状态
+      if (this.tunnel && this.tunnel.isActive()) {
+        // 使用信道给服务器推送「speak」消息
+        this.tunnel.emit(type, data);
+      }
     }
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "tunnelStatus"])
+    ...mapState(["tunnel", "tunnelStatus", "identity", "isOwner"])
   },
   store
 };
