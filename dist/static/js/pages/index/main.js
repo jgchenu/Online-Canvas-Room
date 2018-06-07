@@ -103,6 +103,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -162,21 +163,22 @@ var util = __webpack_require__(8);
 
     //手指移动事件
     touchMove: function touchMove(e) {
+      var x = ~~(0.5 + e.touches[0].x);
+      var y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
       if (this.chosen === "draw" || this.chosen === "eraser") {
         if (this.chosen === "draw") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(2);
-          this.ctx.setLineCap("round"); // 让线条圆润
+          this.ctx.setLineWidth(1);
         } else if (this.chosen == "eraser") {
           this.ctx.setStrokeStyle("#ffffff");
           this.ctx.setLineWidth(10);
-          this.ctx.setLineCap("round"); // 让线条圆润
         }
+        this.ctx.setLineCap("round"); // 让线条圆润
         if (this.begin) {
           this.ctx.moveTo(this.startX, this.startY);
-          this.startX = e.touches[0].x;
-          this.startY = e.touches[0].y;
+          this.startX = x;
+          this.startY = y;
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
@@ -245,20 +247,9 @@ var util = __webpack_require__(8);
       this.begin = false;
     },
 
-    //判断是否是单指
-    isDouble: function isDouble(_ref) {
-      var touches = _ref.touches;
-
-      if (touches.length === 1) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-
     //选择动作类型
-    choseType: function choseType(_ref2) {
-      var target = _ref2.target;
+    choseType: function choseType(_ref) {
+      var target = _ref.target;
 
       this.chosen = this.types[target.id];
       if (this.chosen === "clear") {
@@ -338,6 +329,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       'top': _vm.offsetY + 'rpx'
     })
   }, [_c('canvas', {
+    ref: 'canvas',
     style: ({
       'height': _vm.height + 'rpx',
       'width': _vm.width + 'rpx'

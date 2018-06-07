@@ -9,7 +9,8 @@
    disable-scroll="true"  
    @touchstart="touchStart" 
    @touchmove="touchMove"
-   @touchend="touchEnd" />
+   @touchend="touchEnd"
+   :ref="'canvas'"/>
  </div> 
   <aside class="types" @click="choseType" v-if="identity==='created'">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
@@ -77,21 +78,22 @@ export default {
     },
     //手指移动事件
     touchMove(e) {
+      let x = ~~(0.5 + e.touches[0].x);
+      let y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
       if (this.chosen === "draw" || this.chosen === "eraser") {
         if (this.chosen === "draw") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(2);
-          this.ctx.setLineCap("round"); // 让线条圆润
+          this.ctx.setLineWidth(1);
         } else if (this.chosen == "eraser") {
           this.ctx.setStrokeStyle("#ffffff");
           this.ctx.setLineWidth(10);
-          this.ctx.setLineCap("round"); // 让线条圆润
         }
+        this.ctx.setLineCap("round"); // 让线条圆润
         if (this.begin) {
           this.ctx.moveTo(this.startX, this.startY);
-          this.startX = e.touches[0].x;
-          this.startY = e.touches[0].y;
+          this.startX = x;
+          this.startY = y;
           this.ctx.lineTo(this.startX, this.startY);
           this.ctx.stroke();
           this.ctx.closePath();
@@ -161,14 +163,6 @@ export default {
 
       this.drawArr = [];
       this.begin = false;
-    },
-    //判断是否是单指
-    isDouble({ touches }) {
-      if (touches.length === 1) {
-        return false;
-      } else {
-        return true;
-      }
     },
     //选择动作类型
     choseType({ target }) {

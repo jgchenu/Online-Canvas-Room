@@ -46,8 +46,8 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     // console.log(scene);
-    // options.id = 5;
-    // this.room.roomId = options.id;
+    options.id = 16;
+    this.room.roomId = options.id;
     if (options.id) {
       this.changeIdentityStatus("join");
       this.tunnel.emit("join", { "room-id": this.room.roomId });
