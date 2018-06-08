@@ -201,7 +201,6 @@ export default {
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", data => {
         if (this.identity !== "join") {
-          console.log("不是用户");
           return;
         }
         this.recoverAction(data);
@@ -253,7 +252,6 @@ export default {
       } else if (type === 4) {
         this.clearCanvas();
       }
-      console.log("收到说话消息：", data);
     },
     clearCanvas() {
       wx.drawCanvas({

@@ -292,7 +292,6 @@ var util = __webpack_require__(8);
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (data) {
         if (_this2.identity !== "join") {
-          console.log("不是用户");
           return;
         }
         _this2.recoverAction(data);
@@ -353,7 +352,6 @@ var util = __webpack_require__(8);
       } else if (type === 4) {
         this.clearCanvas();
       }
-      console.log("收到说话消息：", data);
     },
     clearCanvas: function clearCanvas() {
       wx.drawCanvas({
