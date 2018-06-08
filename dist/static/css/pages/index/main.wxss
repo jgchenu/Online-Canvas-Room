@@ -4,11 +4,15 @@ page.data-v-566fd662 {
   transform: translateZ(0);
   position: relative;
 }
-page .canvas.data-v-566fd662 {
+page .canvas.data-v-566fd662,
+page .show.data-v-566fd662 {
   position: absolute;
   border: 2rpx solid #000;
   z-index: 2;
   border-radius: 20rpx;
+}
+page .show.data-v-566fd662 {
+  z-index: 1;
 }
 page .types.data-v-566fd662 {
   width: 100%;

@@ -60,12 +60,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations([
-      "changeStatus",
-      "changeIdentityStatus",
-      "changeOwnerStatus",
-      "setUser"
-    ]),
+    ...mapMutations(["changeStatus", "changeIdentityStatus"]),
     enterCanvas() {
       if (this.identity === "created" || this.identity === "join") {
         wx.navigateTo({
@@ -122,16 +117,12 @@ export default {
         if (err.code === 40302) {
           util.showSuccess("房间已经创建");
           this.changeIdentityStatus("created");
-          this.changeOwnerStatus(true);
         } else if (err.code === 40001) {
           util.showTip("报错", "参数错误");
         } else if (err.code === 40303) {
           util.showTip("提示", "你已经有加入房间了");
           this.room.roomId = err.room.id;
           this.sendMessage("room", { "room-id": this.room.roomId });
-          if (condition) {
-            
-          }
         } else if (err.code === 40304) {
           util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");
@@ -145,7 +136,6 @@ export default {
         console.log("create：", data);
         util.showTip("提示", "房间创建成功");
         this.changeIdentityStatus("created");
-        this.changeOwnerStatus(true);
       });
       tunnel.on("error", err => {
         console.log("error:", err);
@@ -178,13 +168,18 @@ export default {
         this.room.members = [];
         this.room.roomId = "";
         this.room.qrCode = "";
-        this.changeOwnerStatus(false);
       });
       //监听房间的信息
       tunnel.on("room", data => {
+        if (this.hasLeaveCanvas) return;
         console.log("room", data);
         this.room.members = data.room.members;
         this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
+        if (data.authority === 1) {
+          this.changeIdentityStatus("created");
+        } else if (data.authority === 2) {
+          this.changeIdentityStatus("join");
+        }
       });
       //监听退出房间的信息
       tunnel.on("leave", data => {
@@ -209,7 +204,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "tunnelStatus", "identity", "isOwner", "user"])
+    ...mapState(["tunnel", "tunnelStatus", "identity", "hasLeaveCanvas"])
   },
   store
 };

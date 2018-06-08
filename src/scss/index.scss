@@ -2,11 +2,15 @@ page {
   background: rgba(153, 204, 255, 0.1);
   transform: translateZ(0);
   position: relative;
-  .canvas {
+  .canvas,
+  .show {
     position: absolute;
     border: 1px solid #000;
     z-index: 2;
     border-radius: 10px;
+  }
+  .show {
+    z-index: 1;
   }
   .types {
     width: 100%;
@@ -31,4 +35,3 @@ page {
     }
   }
 }
-

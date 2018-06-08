@@ -4,8 +4,8 @@ global.webpackJsonp([2],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
@@ -23,8 +23,8 @@ var __vue_scopeId__ = "data-v-566fd662"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
   __vue_styles__,
   __vue_scopeId__,
   __vue_module_identifier__
@@ -35,7 +35,7 @@ if (Component.options.functional) {console.error("[vue-loader] index.vue: functi
 
 /* hot reload */
 if (false) {(function () {
-  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
   module.hot.accept()
@@ -103,8 +103,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
-//
-//
 
 
 
@@ -123,7 +121,12 @@ var util = __webpack_require__(8);
   onLoad: function onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-    // this.sendMessage('speak',{'room-id':this.roomId,type:1})
+    if (this.hasLeaveCanvas) {
+      this.sendMessage("room", { "room-id": this.roomId });
+    }
+  },
+  onUnload: function onUnload() {
+    this.changeCanvasStatus(true);
   },
   data: function data() {
     return {
@@ -147,7 +150,7 @@ var util = __webpack_require__(8);
   },
 
   components: {},
-  methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus", "changeRoomStatus"]), {
+  methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus", "changeCanvasStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
       if (this.identity !== "created") {
@@ -292,20 +295,14 @@ var util = __webpack_require__(8);
           console.log("不是用户");
           return;
         }
-        var type = data.data.type;
-        if (type === 1) {
-          var drawArr = data.data.data.drawArr;
-          _this2.drawCanvas(1, "#000000", drawArr);
-        } else if (type === 2) {
-          var offsetX = data.data.data.offsetX;
-          _this2.offsetX = offsetX;
-        } else if (type === 3) {
-          var _drawArr = data.data.data.drawArr;
-          _this2.drawCanvas(10, "#ffffff", _drawArr);
-        } else if (type === 4) {
-          _this2.clearCanvas();
+        _this2.recoverAction(data);
+      });
+      tunnel.on("room", function (data) {
+        if (_this2.hasLeaveCanvas) {
+          console.log(data);
+          _this2.recoverCanvas(data.room.data);
+          _this2.changeCanvasStatus(false);
         }
-        console.log("收到说话消息：", data);
       });
     },
 
@@ -337,6 +334,27 @@ var util = __webpack_require__(8);
       });
       this.ctx.clearActions();
     },
+    recoverCanvas: function recoverCanvas(data) {
+      for (var index = 0; index < data.length; index++) {
+        this.recoverAction(data[index]);
+      }
+    },
+    recoverAction: function recoverAction(data) {
+      var type = data.data.type;
+      if (type === 1) {
+        var drawArr = data.data.data.drawArr;
+        this.drawCanvas(1, "#000000", drawArr);
+      } else if (type === 2) {
+        var offsetX = data.data.data.offsetX;
+        this.offsetX = offsetX;
+      } else if (type === 3) {
+        var _drawArr = data.data.data.drawArr;
+        this.drawCanvas(10, "#ffffff", _drawArr);
+      } else if (type === 4) {
+        this.clearCanvas();
+      }
+      console.log("收到说话消息：", data);
+    },
     clearCanvas: function clearCanvas() {
       wx.drawCanvas({
         canvasId: "Canvas",
@@ -360,7 +378,7 @@ var util = __webpack_require__(8);
       }
     }
   }),
-  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "tunnelStatus"])),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "tunnelStatus", "hasLeaveCanvas"])),
   store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 
@@ -427,7 +445,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
   }
 }
 

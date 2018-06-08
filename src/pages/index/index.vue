@@ -11,8 +11,6 @@
    @touchmove="touchMove"
    @touchend="touchEnd"
    :ref="'canvas'" class="canvas" />
-
-
   <aside class="types" @click="choseType" v-if="identity==='created'">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
       {{item}}
@@ -38,7 +36,12 @@ export default {
   onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-    // this.sendMessage('speak',{'room-id':this.roomId,type:1})
+    if (this.hasLeaveCanvas) {
+      this.sendMessage("room", { "room-id": this.roomId });
+    }
+  },
+  onUnload() {
+    this.changeCanvasStatus(true);
   },
   data() {
     return {
@@ -63,7 +66,7 @@ export default {
   components: {},
   methods: {
     //映射
-    ...mapMutations(["changeStatus", "changeRoomStatus"]),
+    ...mapMutations(["changeStatus", "changeCanvasStatus"]),
     //触摸开始事件
     touchStart(e) {
       if (this.identity !== "created") {
@@ -201,20 +204,14 @@ export default {
           console.log("不是用户");
           return;
         }
-        const type = data.data.type;
-        if (type === 1) {
-          const drawArr = data.data.data.drawArr;
-          this.drawCanvas(1, "#000000", drawArr);
-        } else if (type === 2) {
-          const offsetX = data.data.data.offsetX;
-          this.offsetX = offsetX;
-        } else if (type === 3) {
-          const drawArr = data.data.data.drawArr;
-          this.drawCanvas(10, "#ffffff", drawArr);
-        } else if (type === 4) {
-          this.clearCanvas();
+        this.recoverAction(data);
+      });
+      tunnel.on("room", data => {
+        if (this.hasLeaveCanvas) {
+          console.log(data);
+          this.recoverCanvas(data.room.data);
+          this.changeCanvasStatus(false);
         }
-        console.log("收到说话消息：", data);
       });
     },
     //绘画函数
@@ -236,6 +233,27 @@ export default {
         actions: this.ctx.getActions() // 获取绘图动作数组
       });
       this.ctx.clearActions();
+    },
+    recoverCanvas(data) {
+      for (let index = 0; index < data.length; index++) {
+        this.recoverAction(data[index]);
+      }
+    },
+    recoverAction(data) {
+      const type = data.data.type;
+      if (type === 1) {
+        const drawArr = data.data.data.drawArr;
+        this.drawCanvas(1, "#000000", drawArr);
+      } else if (type === 2) {
+        const offsetX = data.data.data.offsetX;
+        this.offsetX = offsetX;
+      } else if (type === 3) {
+        const drawArr = data.data.data.drawArr;
+        this.drawCanvas(10, "#ffffff", drawArr);
+      } else if (type === 4) {
+        this.clearCanvas();
+      }
+      console.log("收到说话消息：", data);
     },
     clearCanvas() {
       wx.drawCanvas({
@@ -259,7 +277,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "identity", "tunnelStatus"])
+    ...mapState(["tunnel", "identity", "tunnelStatus", "hasLeaveCanvas"])
   },
   store
 };
