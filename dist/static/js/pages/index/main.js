@@ -115,14 +115,17 @@ var util = __webpack_require__(8);
     this.listenTunnel();
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
-    this.ctx.setLineWidth(2);
+    this.ctx.setLineWidth(1);
     this.ctx.setLineCap("round"); // 让线条圆润
   },
   onLoad: function onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-    this.atCanvas = true;
+    this.changeCanvasStatus(true);
     this.sendMessage("room", { "room-id": this.roomId });
+  },
+  onUnload: function onUnload() {
+    this.changeCanvasStatus(false);
   },
   data: function data() {
     return {
@@ -290,14 +293,14 @@ var util = __webpack_require__(8);
         _this2.recoverAction(data);
       });
       tunnel.on("room", function (data) {
-        util.showBusy('恢复画布状态中');
+        util.showBusy("恢复画布状态中");
         _this2.recoverCanvas(data.room.data);
       });
     },
 
     //绘画函数
     drawCanvas: function drawCanvas() {
-      var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2;
+      var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "#000000";
       var drawArr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 

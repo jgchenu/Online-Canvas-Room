@@ -30,14 +30,17 @@ export default {
     this.listenTunnel();
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
-    this.ctx.setLineWidth(2);
+    this.ctx.setLineWidth(1);
     this.ctx.setLineCap("round"); // 让线条圆润
   },
   onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-      this.atCanvas=true;
-      this.sendMessage("room", { "room-id": this.roomId });
+    this.changeCanvasStatus(true);
+    this.sendMessage("room", { "room-id": this.roomId });
+  },
+  onUnload() {
+    this.changeCanvasStatus(false);
   },
   data() {
     return {
@@ -199,12 +202,12 @@ export default {
         this.recoverAction(data);
       });
       tunnel.on("room", data => {
-        util.showBusy('恢复画布状态中')
+        util.showBusy("恢复画布状态中");
         this.recoverCanvas(data.room.data);
       });
     },
     //绘画函数
-    drawCanvas(width = 2, color = "#000000", drawArr = []) {
+    drawCanvas(width = 1, color = "#000000", drawArr = []) {
       this.ctx.setStrokeStyle(color);
       this.ctx.setLineWidth(width);
       this.ctx.beginPath();
