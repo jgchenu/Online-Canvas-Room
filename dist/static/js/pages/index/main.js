@@ -129,7 +129,6 @@ var util = __webpack_require__(8);
     return {
       drawArr: [],
       prevPosition: [0, 0],
-      w: 2,
       red: 33,
       green: 33,
       blue: 33,
@@ -288,20 +287,60 @@ var util = __webpack_require__(8);
         _this.timer = null;
       }, 8);
     },
+
+    //监听tunnel
     listenTunnel: function listenTunnel() {
+      var _this2 = this;
+
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (data) {
-        // util.showModel("信道消息", speak.word);
+        var _data$data = data.data,
+            drawArr = _data$data.data.drawArr,
+            type = _data$data.type;
+
+        if (type === 1) {
+          _this2.drawCanvas(2, "#000000", drawArr);
+        } else if (type === 3) {
+          _this2.drawCanvas(2, "#ffffff", drawArr);
+        }
         console.log("收到说话消息：", data);
       });
     },
 
-    /**
-     * 点击「发送消息」按钮，测试使用信道发送消息
-     */
+    //绘画函数
+    drawCanvas: function drawCanvas() {
+      var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2;
+      var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "#000000";
+      var drawArr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      this.ctx.setStrokeStyle(color);
+      this.ctx.setLineWidth(width);
+      this.ctx.beginPath();
+
+      var _drawArr$shift = drawArr.shift(),
+          x = _drawArr$shift.x,
+          y = _drawArr$shift.y;
+
+      this.ctx.moveTo(x, y);
+      for (var i = 0; i < drawArr.length; i++) {
+        var item = drawArr[i];
+        this.ctx.lineTo(item.x, item.y);
+        this.ctx.stroke();
+      }
+      this.ctx.closePath();
+      wx.drawCanvas({
+        canvasId: "Canvas",
+        reserve: true,
+        actions: this.ctx.getActions() // 获取绘图动作数组
+      });
+      this.ctx.clearActions();
+    },
     sendMessage: function sendMessage(type) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      // console.log(this.tunnel);
+      // console.log(this.tunnelStatus);
       var tunnel = this.tunnel.tunnel;
 
       if (!this.tunnelStatus || !this.tunnelStatus === "connected") return;
@@ -312,7 +351,7 @@ var util = __webpack_require__(8);
       }
     }
   }),
-  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "roomState"])),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "tunnelStatus"])),
   store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 
