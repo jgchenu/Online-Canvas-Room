@@ -121,24 +121,17 @@ var util = __webpack_require__(8);
   onLoad: function onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-    if (this.hasLeaveCanvas) {
-      this.sendMessage("room", { "room-id": this.roomId });
-    }
-  },
-  onUnload: function onUnload() {
-    this.changeCanvasStatus(true);
+    this.atCanvas = true;
+    this.sendMessage("room", { "room-id": this.roomId });
   },
   data: function data() {
     return {
       drawArr: [],
       prevPosition: [0, 0],
-      red: 33,
-      green: 33,
-      blue: 33,
       startX: 0,
       startY: 0,
       height: 1100,
-      width: 720,
+      width: 1440,
       offsetX: 0,
       offsetY: 0,
       timer: null,
@@ -297,11 +290,8 @@ var util = __webpack_require__(8);
         _this2.recoverAction(data);
       });
       tunnel.on("room", function (data) {
-        if (_this2.hasLeaveCanvas) {
-          console.log(data);
-          _this2.recoverCanvas(data.room.data);
-          _this2.changeCanvasStatus(false);
-        }
+        util.showBusy('恢复画布状态中');
+        _this2.recoverCanvas(data.room.data);
       });
     },
 
@@ -376,7 +366,7 @@ var util = __webpack_require__(8);
       }
     }
   }),
-  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "tunnelStatus", "hasLeaveCanvas"])),
+  computed: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["b" /* mapState */])(["tunnel", "identity", "tunnelStatus", "atCanvas"])),
   store: __WEBPACK_IMPORTED_MODULE_0__vuex_store_js__["a" /* default */]
 });
 

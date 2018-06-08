@@ -6672,7 +6672,7 @@ var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
     tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
     tunnelStatus: 'closed',
     identity: 'none',
-    hasLeaveCanvas: false
+    atCanvas: false
     // isOwner: false,
     // user: {}
   },
@@ -6684,7 +6684,7 @@ var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
       state.identity = status;
     },
     changeCanvasStatus: function changeCanvasStatus(state, status) {
-      state.hasLeaveCanvas = status;
+      state.atCanvas = status;
     }
     // changeOwnerStatus: (state, status) => {
     //   state.isOwner = status;

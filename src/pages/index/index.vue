@@ -36,24 +36,17 @@ export default {
   onLoad(option) {
     this.roomId = option.id;
     console.log(option.id);
-    if (this.hasLeaveCanvas) {
+      this.atCanvas=true;
       this.sendMessage("room", { "room-id": this.roomId });
-    }
-  },
-  onUnload() {
-    this.changeCanvasStatus(true);
   },
   data() {
     return {
       drawArr: [],
       prevPosition: [0, 0],
-      red: 33,
-      green: 33,
-      blue: 33,
       startX: 0,
       startY: 0,
       height: 1100,
-      width: 720,
+      width: 1440,
       offsetX: 0,
       offsetY: 0,
       timer: null,
@@ -206,11 +199,8 @@ export default {
         this.recoverAction(data);
       });
       tunnel.on("room", data => {
-        if (this.hasLeaveCanvas) {
-          console.log(data);
-          this.recoverCanvas(data.room.data);
-          this.changeCanvasStatus(false);
-        }
+        util.showBusy('恢复画布状态中')
+        this.recoverCanvas(data.room.data);
       });
     },
     //绘画函数
@@ -275,7 +265,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "identity", "tunnelStatus", "hasLeaveCanvas"])
+    ...mapState(["tunnel", "identity", "tunnelStatus", "atCanvas"])
   },
   store
 };

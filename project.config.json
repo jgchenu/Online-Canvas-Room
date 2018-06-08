@@ -29,14 +29,14 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 0,
 			"list": [
 				{
-					"id": -1,
-					"name": "二维码扫码编译",
+					"id": 0,
+					"name": "小程序码扫码编译",
 					"pathName": "pages/enter/main",
-					"query": "scene=W91IrA01469030",
-					"scene": "1011"
+					"query": "scene=s&id=[int] ",
+					"scene": "1047"
 				}
 			]
 		}

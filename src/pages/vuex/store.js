@@ -12,7 +12,7 @@ const store = new Vuex.Store({
     tunnel: new qcloud.Tunnel(config.service.tunnelUrl),
     tunnelStatus: 'closed',
     identity: 'none',
-    hasLeaveCanvas: false
+    atCanvas: false
     // isOwner: false,
     // user: {}
   },
@@ -24,7 +24,7 @@ const store = new Vuex.Store({
       state.identity = status;
     },
     changeCanvasStatus: (state, status) => {
-      state.hasLeaveCanvas = status;
+      state.atCanvas = status;
     }
     // changeOwnerStatus: (state, status) => {
     //   state.isOwner = status;

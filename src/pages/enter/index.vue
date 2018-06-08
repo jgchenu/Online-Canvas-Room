@@ -45,14 +45,17 @@ export default {
     });
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
-    // console.log(scene);
-    // options.id = 21;
-    // this.room.roomId = options.id;
+    console.log(options);
+    options.id = 21;
+    this.room.roomId = options.id;
     if (options.id) {
       this.changeIdentityStatus("join");
       this.tunnel.emit("join", { "room-id": this.room.roomId });
     }
     this.openTunnel();
+  },
+  onUnload() {
+    this.changeCanvasStatus(false);
   },
   data() {
     return {
@@ -60,7 +63,11 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["changeStatus", "changeIdentityStatus"]),
+    ...mapMutations([
+      "changeStatus",
+      "changeIdentityStatus",
+      "changeCanvasStatus"
+    ]),
     enterCanvas() {
       if (this.identity === "created" || this.identity === "join") {
         wx.navigateTo({
@@ -171,7 +178,7 @@ export default {
       });
       //监听房间的信息
       tunnel.on("room", data => {
-        if (this.hasLeaveCanvas) return;
+        if (this.atCanvas) return;
         console.log("room", data);
         this.room.members = data.room.members;
         this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
@@ -204,7 +211,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "tunnelStatus", "identity", "hasLeaveCanvas"])
+    ...mapState(["tunnel", "tunnelStatus", "identity", "atCanvas"])
   },
   store
 };
