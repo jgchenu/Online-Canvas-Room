@@ -104,6 +104,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -200,7 +201,7 @@ var util = __webpack_require__(8);
       }
     },
     touchEnd: function touchEnd() {
-      if (this.choseType === "draw") {
+      if (this.chosen === "draw") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -211,7 +212,7 @@ var util = __webpack_require__(8);
             }
           }
         });
-      } else if (this.choseType === "move") {
+      } else if (this.chosen === "move") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -222,7 +223,7 @@ var util = __webpack_require__(8);
             }
           }
         });
-      } else if (this.choseType === "eraser") {
+      } else if (this.chosen === "eraser") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -233,7 +234,7 @@ var util = __webpack_require__(8);
             }
           }
         });
-      } else if (this.choseType === "clear") {
+      } else if (this.chosen === "clear") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 2,
@@ -242,7 +243,16 @@ var util = __webpack_require__(8);
           }
         });
       }
-
+      this.sendMessage("speak", {
+        "room-id": this.roomId,
+        action: 1,
+        data: {
+          type: 1,
+          data: {
+            drawArr: this.drawArr
+          }
+        }
+      });
       this.drawArr = [];
       this.begin = false;
     },
@@ -322,17 +332,14 @@ var util = __webpack_require__(8);
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "index"
-  }, [_c('div', {
-    staticClass: "canvas",
-    style: ({
-      'left': _vm.offsetX + 'rpx',
-      'top': _vm.offsetY + 'rpx'
-    })
   }, [_c('canvas', {
     ref: 'canvas',
+    staticClass: "canvas",
     style: ({
       'height': _vm.height + 'rpx',
-      'width': _vm.width + 'rpx'
+      'width': _vm.width + 'rpx',
+      'left': _vm.offsetX + 'rpx',
+      'top': _vm.offsetY + 'rpx'
     }),
     attrs: {
       "canvas-id": "Canvas",
@@ -344,7 +351,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       "touchmove": _vm.touchMove,
       "touchend": _vm.touchEnd
     }
-  })]), _vm._v(" "), (_vm.identity === 'created') ? _c('aside', {
+  }), _vm._v(" "), (_vm.identity === 'created') ? _c('aside', {
     staticClass: "types",
     attrs: {
       "eventid": '1'

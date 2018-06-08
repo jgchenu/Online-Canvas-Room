@@ -46,8 +46,8 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     // console.log(scene);
-    options.id = 16;
-    this.room.roomId = options.id;
+    // options.id = 19;
+    // this.room.roomId = options.id;
     if (options.id) {
       this.changeIdentityStatus("join");
       this.tunnel.emit("join", { "room-id": this.room.roomId });
@@ -56,10 +56,6 @@ export default {
   },
   data() {
     return {
-      // userInfo: {},
-      // logged: false,
-      // takeSession: false,
-      // requestResult: "",
       room: { qrCode: "", roomId: "", members: [] }
     };
   },
@@ -129,10 +125,10 @@ export default {
         } else if (err.code === 40001) {
           util.showTip("报错", "参数错误");
         } else if (err.code === 40303) {
-          util.showTip("提示", "你已经有加入房间了,正在重新进入中");
-          this.sendMessage("shut", { "room-id": this.room.roomId });
-          this.room.roomId = err.room.id;
-          this.sendMessage("join", { "room-id": this.room.roomId });
+          util.showTip("提示", "你已经有加入房间了");
+        } else if (err.code === 40304) {
+          util.showTip("提示", "房间已经关闭");
+          this.changeIdentityStatus("none");
         }
         console.log(err);
       });
@@ -151,7 +147,7 @@ export default {
       //监听用户信息
       tunnel.on("user", data => {
         // this.members.push({ avatarUrl: data.information.avatarUrl });
-        if (data.room && data.room.created[0]&& this.identity === "none") {
+        if (data.room && data.room.created[0] && this.identity === "none") {
           this.room.roomId =
             data.room && data.room.created && data.room.created[0].id;
           this.room.qrCode = `data:image/jpeg;base64,${
@@ -173,9 +169,9 @@ export default {
       tunnel.on("shut", data => {
         console.log("shut:", data);
         this.changeIdentityStatus("none");
-        this.room.members=[];
-        this.room.roomId='';
-        this.room.qrCode='';
+        this.room.members = [];
+        this.room.roomId = "";
+        this.room.qrCode = "";
         this.changeOwnerStatus(false);
       });
       //监听房间的信息

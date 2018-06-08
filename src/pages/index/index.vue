@@ -1,17 +1,18 @@
 <template>
 <div class="index">
- <div class="canvas" :style="{'left':offsetX+'rpx','top':offsetY+'rpx'}"> 
+
    <canvas 
    canvas-id="Canvas" 
    :style="{'height'
    :height+'rpx','width'
-   :width+'rpx'}" 
+   :width+'rpx','left':offsetX+'rpx','top':offsetY+'rpx'}" 
    disable-scroll="true"  
    @touchstart="touchStart" 
    @touchmove="touchMove"
    @touchend="touchEnd"
-   :ref="'canvas'"/>
- </div> 
+   :ref="'canvas'" class="canvas" />
+
+
   <aside class="types" @click="choseType" v-if="identity==='created'">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
       {{item}}
@@ -118,7 +119,7 @@ export default {
       }
     },
     touchEnd() {
-      if (this.choseType === "draw") {
+      if (this.chosen === "draw") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -129,7 +130,7 @@ export default {
             }
           }
         });
-      } else if (this.choseType === "move") {
+      } else if (this.chosen === "move") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -140,7 +141,7 @@ export default {
             }
           }
         });
-      } else if (this.choseType === "eraser") {
+      } else if (this.chosen === "eraser") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -151,7 +152,7 @@ export default {
             }
           }
         });
-      } else if (this.choseType === "clear") {
+      } else if (this.chosen === "clear") {
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 2,
@@ -160,7 +161,16 @@ export default {
           }
         });
       }
-
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 1,
+          data: {
+            type: 1,
+            data: {
+              drawArr: this.drawArr
+            }
+          }
+        });
       this.drawArr = [];
       this.begin = false;
     },
