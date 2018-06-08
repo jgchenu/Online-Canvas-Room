@@ -46,7 +46,7 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     // console.log(scene);
-    // options.id = 19;
+    // options.id = 21;
     // this.room.roomId = options.id;
     if (options.id) {
       this.changeIdentityStatus("join");
@@ -126,6 +126,8 @@ export default {
           util.showTip("报错", "参数错误");
         } else if (err.code === 40303) {
           util.showTip("提示", "你已经有加入房间了");
+          this.room.roomId = err.room.id;
+          this.sendMessage("room", { "room-id": this.room.roomId });
         } else if (err.code === 40304) {
           util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");

@@ -151,14 +151,6 @@ export default {
             }
           }
         });
-      } else if (this.chosen === "clear") {
-        this.sendMessage("speak", {
-          "room-id": this.roomId,
-          action: 2,
-          data: {
-            type: 4
-          }
-        });
       }
       this.drawArr = [];
       this.begin = false;
@@ -175,6 +167,13 @@ export default {
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
+        this.sendMessage("speak", {
+          "room-id": this.roomId,
+          action: 2,
+          data: {
+            type: 4
+          }
+        });
         this.clearCanvas();
       }
     },
@@ -189,12 +188,19 @@ export default {
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", data => {
-        const { data: { data: { drawArr, offsetX }, type } } = data;
+        if (this.identity !== "join") {
+          console.log("不是用户");
+          return;
+        }
+        const type = data.data.type;
         if (type === 1) {
+          const drawArr = data.data.data.drawArr;
           this.drawCanvas(1, "#000000", drawArr);
         } else if (type === 2) {
+          const offsetX = data.data.data.offsetX;
           this.offsetX = offsetX;
         } else if (type === 3) {
+          const drawArr = data.data.data.drawArr;
           this.drawCanvas(10, "#ffffff", drawArr);
         } else if (type === 4) {
           this.clearCanvas();
