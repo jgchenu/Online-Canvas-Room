@@ -150,6 +150,9 @@ var util = __webpack_require__(8);
   methods: _extends({}, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* mapMutations */])(["changeStatus", "changeRoomStatus"]), {
     //触摸开始事件
     touchStart: function touchStart(e) {
+      if (this.identity !== "created") {
+        return;
+      }
       this.prevPosition = [e.touches[0].x, e.touches[0].y];
       this.startX = e.touches[0].x;
       this.startY = e.touches[0].y;
@@ -163,6 +166,9 @@ var util = __webpack_require__(8);
 
     //手指移动事件
     touchMove: function touchMove(e) {
+      if (this.identity !== "created") {
+        return;
+      }
       var x = ~~(0.5 + e.touches[0].x);
       var y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
@@ -200,6 +206,9 @@ var util = __webpack_require__(8);
       }
     },
     touchEnd: function touchEnd() {
+      if (this.identity !== "created") {
+        return;
+      }
       if (this.chosen === "draw") {
         this.sendMessage("speak", {
           "room-id": this.roomId,

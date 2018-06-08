@@ -6720,7 +6720,7 @@ var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
     tunnelStatus: 'closed',
     identity: 'none',
     isOwner: false,
-    room: {}
+    user: {}
   },
   mutations: {
     changeStatus: function changeStatus(state, status) {
@@ -6732,8 +6732,8 @@ var store = new __WEBPACK_IMPORTED_MODULE_1_vuex__["c" /* default */].Store({
     changeOwnerStatus: function changeOwnerStatus(state, status) {
       state.isOwner = status;
     },
-    setRoom: function setRoom(state, val) {
-      state.room = val;
+    setUser: function setUser(state, val) {
+      state.user = val;
     }
   }
 });

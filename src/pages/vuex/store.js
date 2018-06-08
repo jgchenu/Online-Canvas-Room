@@ -13,7 +13,7 @@ const store = new Vuex.Store({
     tunnelStatus: 'closed',
     identity: 'none',
     isOwner: false,
-    room: {}
+    user: {}
   },
   mutations: {
     changeStatus: (state, status) => {
@@ -25,8 +25,8 @@ const store = new Vuex.Store({
     changeOwnerStatus: (state, status) => {
       state.isOwner = status;
     },
-    setRoom: (state, val) => {
-      state.room = val
+    setUser: (state, val) => {
+      state.user = val
     }
   }
 })

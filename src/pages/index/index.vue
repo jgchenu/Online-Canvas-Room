@@ -66,6 +66,9 @@ export default {
     ...mapMutations(["changeStatus", "changeRoomStatus"]),
     //触摸开始事件
     touchStart(e) {
+      if (this.identity !== "created") {
+        return;
+      }
       this.prevPosition = [e.touches[0].x, e.touches[0].y];
       this.startX = e.touches[0].x;
       this.startY = e.touches[0].y;
@@ -78,6 +81,9 @@ export default {
     },
     //手指移动事件
     touchMove(e) {
+      if (this.identity !== "created") {
+        return;
+      }
       let x = ~~(0.5 + e.touches[0].x);
       let y = ~~(e.touches[0].y + 0.5);
       //判断是单手指
@@ -118,6 +124,9 @@ export default {
       }
     },
     touchEnd() {
+      if (this.identity !== "created") {
+        return;
+      }
       if (this.chosen === "draw") {
         this.sendMessage("speak", {
           "room-id": this.roomId,

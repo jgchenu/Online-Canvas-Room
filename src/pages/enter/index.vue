@@ -63,7 +63,8 @@ export default {
     ...mapMutations([
       "changeStatus",
       "changeIdentityStatus",
-      "changeOwnerStatus"
+      "changeOwnerStatus",
+      "setUser"
     ]),
     enterCanvas() {
       if (this.identity === "created" || this.identity === "join") {
@@ -128,6 +129,9 @@ export default {
           util.showTip("提示", "你已经有加入房间了");
           this.room.roomId = err.room.id;
           this.sendMessage("room", { "room-id": this.room.roomId });
+          if (condition) {
+            
+          }
         } else if (err.code === 40304) {
           util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");
@@ -180,6 +184,7 @@ export default {
       tunnel.on("room", data => {
         console.log("room", data);
         this.room.members = data.room.members;
+        this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
       });
       //监听退出房间的信息
       tunnel.on("leave", data => {
@@ -204,7 +209,7 @@ export default {
   },
   computed: {
     //全局的信道变量
-    ...mapState(["tunnel", "tunnelStatus", "identity", "isOwner"])
+    ...mapState(["tunnel", "tunnelStatus", "identity", "isOwner", "user"])
   },
   store
 };
