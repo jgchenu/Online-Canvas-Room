@@ -242,16 +242,6 @@ var util = __webpack_require__(8);
           }
         });
       }
-      this.sendMessage("speak", {
-        "room-id": this.roomId,
-        action: 1,
-        data: {
-          type: 1,
-          data: {
-            drawArr: this.drawArr
-          }
-        }
-      });
       this.drawArr = [];
       this.begin = false;
     },
@@ -270,12 +260,7 @@ var util = __webpack_require__(8);
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
-        wx.drawCanvas({
-          canvasId: "Canvas",
-          reserve: false,
-          actions: [] // 获取绘图动作数组
-        });
-        this.chosen = "draw";
+        this.clearCanvas();
       }
     },
 
@@ -296,13 +281,19 @@ var util = __webpack_require__(8);
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (data) {
         var _data$data = data.data,
-            drawArr = _data$data.data.drawArr,
+            _data$data$data = _data$data.data,
+            drawArr = _data$data$data.drawArr,
+            offsetX = _data$data$data.offsetX,
             type = _data$data.type;
 
         if (type === 1) {
-          _this2.drawCanvas(2, "#000000", drawArr);
+          _this2.drawCanvas(1, "#000000", drawArr);
+        } else if (type === 2) {
+          _this2.offsetX = offsetX;
         } else if (type === 3) {
-          _this2.drawCanvas(2, "#ffffff", drawArr);
+          _this2.drawCanvas(10, "#ffffff", drawArr);
+        } else if (type === 4) {
+          _this2.clearCanvas();
         }
         console.log("收到说话消息：", data);
       });
@@ -335,6 +326,14 @@ var util = __webpack_require__(8);
         actions: this.ctx.getActions() // 获取绘图动作数组
       });
       this.ctx.clearActions();
+    },
+    clearCanvas: function clearCanvas() {
+      wx.drawCanvas({
+        canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
+      this.chosen = "draw";
     },
     sendMessage: function sendMessage(type) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};

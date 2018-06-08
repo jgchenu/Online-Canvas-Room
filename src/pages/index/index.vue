@@ -160,16 +160,6 @@ export default {
           }
         });
       }
-      this.sendMessage("speak", {
-        "room-id": this.roomId,
-        action: 1,
-        data: {
-          type: 1,
-          data: {
-            drawArr: this.drawArr
-          }
-        }
-      });
       this.drawArr = [];
       this.begin = false;
     },
@@ -185,12 +175,7 @@ export default {
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
-        wx.drawCanvas({
-          canvasId: "Canvas",
-          reserve: false,
-          actions: [] // 获取绘图动作数组
-        });
-        this.chosen = "draw";
+        this.clearCanvas();
       }
     },
     //定时器
@@ -204,11 +189,15 @@ export default {
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", data => {
-        const { data: { data: { drawArr }, type } } = data;
+        const { data: { data: { drawArr, offsetX }, type } } = data;
         if (type === 1) {
-          this.drawCanvas(2, "#000000", drawArr);
+          this.drawCanvas(1, "#000000", drawArr);
+        } else if (type === 2) {
+          this.offsetX = offsetX;
         } else if (type === 3) {
-          this.drawCanvas(2, "#ffffff", drawArr);
+          this.drawCanvas(10, "#ffffff", drawArr);
+        } else if (type === 4) {
+          this.clearCanvas();
         }
         console.log("收到说话消息：", data);
       });
@@ -232,6 +221,14 @@ export default {
         actions: this.ctx.getActions() // 获取绘图动作数组
       });
       this.ctx.clearActions();
+    },
+    clearCanvas() {
+      wx.drawCanvas({
+        canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
+      this.chosen = "draw";
     },
     sendMessage(type, data = {}) {
       // console.log(this.tunnel);
