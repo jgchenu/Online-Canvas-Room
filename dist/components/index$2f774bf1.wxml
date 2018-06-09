@@ -1,5 +1,0 @@
-<template name="index$2f774bf1">
-  <view class="_div data-v-4914c8d9 index">
-    <canvas canvas-id="Canvas" disable-scroll="true" bindtouchend="handleProxy" bindtouchstart="handleProxy" bindtouchmove="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}" class="_canvas data-v-4914c8d9"></canvas>
-  </view>
-</template>

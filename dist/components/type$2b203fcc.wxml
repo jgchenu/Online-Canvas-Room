@@ -1,3 +1,0 @@
-<template name="type$2b203fcc">
-  <view class="_div data-v-d61e462a type"> {{type}} </view>
-</template>
