@@ -21,10 +21,13 @@
 
   <aside class="types" v-if="identity==='created'">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" @click="choseType(index)">
-      <img :src="'http://test.jgchen.xin/canvas/'+item+'.png'" alt="">
+      <img :src="'http://test.jgchen.xin/canvas/'+item+'.png'" :alt="item">
     </div>
   </aside>
-  <p v-if="identity==='join'" class="tip">只有房主可以操作哦</p>
+  <p v-if="identity==='join'" class="tip">只有保存可以操作哦 
+    <img :src="'http://test.jgchen.xin/canvas/save.png'"
+    :alt="item"
+    @click="choseType(4)">(点击保存)</p>
 </div>
 </template>
 <script>
@@ -39,6 +42,8 @@ export default {
     console.log(this.identity);
     this.listenTunnel();
     this.ctx = wx.createContext();
+    //初始化画布背景色
+    this.setBg();
     this.ctx.setStrokeStyle("#000000");
     this.ctx.setLineWidth(2);
     this.ctx.setLineCap("round"); // 让线条圆润
@@ -63,7 +68,7 @@ export default {
       offsetX: 0,
       offsetY: 0,
       timer: null,
-      types: ["draw", "move", "eraser", "clear"],
+      types: ["draw", "move", "eraser", "clear", "save"],
       chosen: "draw",
       time: 0,
       roomId: "",
@@ -73,8 +78,34 @@ export default {
   },
   components: {},
   methods: {
+    getAuth() {
+      wx.getSetting({
+        success: res => {
+          if (
+            !res.authSetting["scope.userInfo"] ||
+            !res.authSetting["scope.writePhotosAlbum"]
+          ) {
+            wx.openSetting({
+              success: res => {
+                console.log(res);
+              }
+            });
+          }
+        }
+      });
+    },
     //映射
     ...mapMutations(["changeStatus", "changeCanvasStatus"]),
+    setBg() {
+      this.ctx.setFillStyle("#ffffff");
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      wx.drawCanvas({
+        canvasId: "show",
+        reserve: true,
+        actions: this.ctx.getActions() // 获取绘图动作数组
+      });
+      this.ctx.clearActions();
+    },
     //触摸开始事件
     touchStart(e) {
       if (this.identity !== "created") {
@@ -206,14 +237,35 @@ export default {
             }
           }
         });
-        // this.ctx.fillRect(0, 0, this.width, this.height);
-        // this.ctx.setFillStyle("white");
-        // this.ctx.clearRect(0, 0, this.width, this.height);
-        // wx.drawCanvas({
-        //   canvasId: "Canvas",
-        //   reserve: true,
-        //   actions: this.ctx.getActions() // 获取绘图动作数组
-        // });
+      } else if (this.types[index] === "save") {
+        var self = this;
+        wx.canvasToTempFilePath({
+          x: 0,
+          y: 0,
+          width: self.width,
+          height: self.height,
+          fileType: "jpg",
+          canvasId: "show",
+          success: function(res) {
+            console.log(res.tempFilePath);
+            self.tempFilePath = res.tempFilePath;
+            util.showBusy("保存中", 15000);
+            wx.saveImageToPhotosAlbum({
+              filePath: self.tempFilePath,
+              success: function(res) {
+                util.showSuccess("保存成功");
+                console.log("save");
+              },
+              fail: function(err) {
+                console.log(err);
+                util.showBusy("请先授权");
+                setTimeout(() => {
+                  self.getAuth();
+                }, 1000);
+              }
+            });
+          }
+        });
       } else {
         this.chosen = this.types[index];
       }
@@ -320,6 +372,7 @@ export default {
         actions: [] // 获取绘图动作数组
       });
       this.chosen = "draw";
+      this.setBg();
     },
     sendMessage(type, data = {}) {
       // console.log(this.tunnel);

@@ -48,7 +48,15 @@ page .types .chosen.data-v-566fd662 {
 page .tip.data-v-566fd662 {
   width: 2880rpx;
   background: #BFCCDC;
-  text-indent: 260rpx;
+  text-indent: 100rpx;
   height: 130rpx;
   line-height: 130rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+page .tip ._img.data-v-566fd662 {
+  margin-left: 20rpx;
+  width: 60rpx;
+  height: 60rpx;
 }

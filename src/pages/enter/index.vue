@@ -43,15 +43,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   onLoad(options) {
     this.listenTunnel();
-    wx.getSetting({
-      success: res => {
-        if (!res.authSetting["scope.userInfo"]) {
-          wx.navigateTo({
-            url: "../loginButton/main"
-          });
-        }
-      }
-    });
+    this.getAuth();
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     console.log(options);
@@ -67,15 +59,7 @@ export default {
   onPullDownRefresh() {
     this.closeTunnel();
     this.openTunnel();
-    wx.getSetting({
-      success: res => {
-        if (!res.authSetting["scope.userInfo"]) {
-          wx.navigateTo({
-            url: "../loginButton/main"
-          });
-        }
-      }
-    });
+    this.getAuth();
     wx.stopPullDownRefresh();
   },
   data() {
@@ -86,6 +70,17 @@ export default {
     };
   },
   methods: {
+    getAuth() {
+      wx.getSetting({
+        success: res => {
+          if (!res.authSetting["scope.userInfo"]) {
+            wx.navigateTo({
+              url: "../loginButton/main"
+            });
+          }
+        }
+      });
+    },
     ...mapMutations([
       "changeStatus",
       "changeIdentityStatus",

@@ -47,8 +47,16 @@ page {
   .tip {
     width: 2880rpx;
     background: #BFCCDC;
-    text-indent: 260rpx;
+    text-indent: 100rpx;
     height: 130rpx;
     line-height: 130rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    img{
+      margin-left: 20rpx;
+      width: 60rpx;
+      height: 60rpx;
+    }
   }
 }
