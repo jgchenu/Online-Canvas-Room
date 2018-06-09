@@ -4,7 +4,7 @@
   <canvas  canvas-id="show" 
    :style="{'height'
    :height+'rpx','width'
-   :width+'rpx','left':(offsetX+2)+'rpx','top':(offsetY+2)+'rpx'}" 
+   :width+'rpx','left':(offsetX)+'rpx','top':(offsetY)+'rpx'}" 
    disable-scroll="true"  
    />
    <canvas 
@@ -186,8 +186,26 @@ export default {
     },
     //选择动作类型
     choseType(index) {
-      this.chosen = this.types[index];
-      if (this.chosen === "clear") {
+      if (this.types[index] === "clear") {
+        wx.showModal({
+          title: "提示",
+          content: "是否清空屏幕",
+          success: res => {
+            if (res.confirm) {
+              console.log("用户点击确定");
+              this.sendMessage("speak", {
+                "room-id": this.roomId,
+                action: 2,
+                data: {
+                  type: 4
+                }
+              });
+              this.clearCanvas();
+            } else if (res.cancel) {
+              console.log("用户点击取消");
+            }
+          }
+        });
         // this.ctx.fillRect(0, 0, this.width, this.height);
         // this.ctx.setFillStyle("white");
         // this.ctx.clearRect(0, 0, this.width, this.height);
@@ -196,14 +214,8 @@ export default {
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
-        this.sendMessage("speak", {
-          "room-id": this.roomId,
-          action: 2,
-          data: {
-            type: 4
-          }
-        });
-        this.clearCanvas();
+      } else {
+        this.chosen = this.types[index];
       }
     },
     //二次贝塞尔中间点计算
@@ -234,8 +246,10 @@ export default {
         this.recoverAction(data);
       });
       tunnel.on("room", data => {
-        util.showBusy("恢复画布状态中");
-        this.recoverCanvas(data.room.data);
+        if (this.atCanvas) {
+          util.showBusy("恢复画布状态中");
+          this.recoverCanvas(data.room.data);
+        }
       });
       tunnel.on("reconnect", () => {
         if (this.atCanvas) {

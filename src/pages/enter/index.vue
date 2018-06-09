@@ -114,14 +114,36 @@ export default {
       this.sendMessage("create");
     },
     closeRoom() {
-      this.sendMessage("shut", { "room-id": this.room.roomId });
+      wx.showModal({
+        title: "提示",
+        content: "是否关闭房间",
+        success: res => {
+          if (res.confirm) {
+            console.log("用户点击确定");
+            this.sendMessage("shut", { "room-id": this.room.roomId });
+          } else if (res.cancel) {
+            console.log("用户点击取消");
+          }
+        }
+      });
     },
     quitRoom() {
-      this.sendMessage("leave");
+      wx.showModal({
+        title: "提示",
+        content: "是否退出房间",
+        success: res => {
+          if (res.confirm) {
+            console.log("用户点击确定");
+            this.sendMessage("leave");
+          } else if (res.cancel) {
+            console.log("用户点击取消");
+          }
+        }
+      });
     },
     //信道连接跟监听
     openTunnel() {
-      util.showBusy("信道建立中...", 10000);
+      util.showBusy("信道建立中...", 15000);
       // 创建信道，需要给定后台服务地址
       var tunnel = this.tunnel;
       // 监听信道内置消息，包括 connect/close/reconnecting/reconnect/error
@@ -151,7 +173,7 @@ export default {
 
       tunnel.on("reconnecting", () => {
         console.log("WebSocket 信道正在重连...");
-        util.showBusy("信道正在重连...", 10000);
+        util.showBusy("信道正在重连...", 15000);
       });
 
       tunnel.on("reconnect", () => {
@@ -166,13 +188,13 @@ export default {
           util.showSuccess("房间已经创建");
           this.changeIdentityStatus("created");
         } else if (err.code === 40001) {
-          util.showTip("报错", "参数错误");
+          // util.showTip("报错", "参数错误");
         } else if (err.code === 40303) {
           util.showTip("提示", "你已经有加入房间了");
           this.room.roomId = err.room.id;
           this.sendMessage("room", { "room-id": this.room.roomId });
         } else if (err.code === 40304) {
-          util.showTip("提示", "房间已经关闭");
+          // util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");
           this.room.qrcode = "";
           this.room.members = [];
@@ -186,7 +208,7 @@ export default {
         this.room.roomId = data.room.id;
         this.sendMessage("room", { "room-id": this.room.roomId });
         console.log("create：", data);
-        util.showTip("提示", "房间创建成功");
+        // util.showTip("提示", "房间创建成功");
         this.changeIdentityStatus("created");
         this.tip = "邀请好友扫码加入房间";
       });
@@ -196,7 +218,7 @@ export default {
       //监听用户信息
       tunnel.on("user", data => {
         // this.members.push({ avatarUrl: data.information.avatarUrl });
-        if (data.room && data.room.created[0] && this.identity === "none") {
+        if (data.room && data.room.created[0]) {
           this.room.roomId =
             data.room && data.room.created && data.room.created[0].id;
           this.room.qrCode = `data:image/jpeg;base64,${
@@ -223,6 +245,7 @@ export default {
         this.room.members = [];
         this.room.roomId = "";
         this.room.qrCode = "";
+        this.tip = "您需要创建一个房间后才可以加入自己的在线画板";
       });
       //监听房间的信息
       tunnel.on("room", data => {
@@ -232,7 +255,9 @@ export default {
         this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
         if (data.authority === 1) {
           this.changeIdentityStatus("created");
+          this.tip = "邀请好友扫码加入房间";
         } else if (data.authority === 2) {
+          this.tip = "邀请好友扫码加入房间";
           this.changeIdentityStatus("join");
         }
       });
@@ -243,7 +268,7 @@ export default {
           this.room.qrCode = "";
           this.changeIdentityStatus("none");
           this.sendMessage("room", { "room-id": this.user.roomId });
-          util.showTip("提示", "你已经退出房间了");
+          // util.showTip("提示", "你已经退出房间了");
         } else {
           this.room.members = data.room.members;
         }

@@ -32,9 +32,8 @@ page .types .type.data-v-566fd662 {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  margin: 0 32rpx;
-  height: 100rpx;
+  margin: 0 40rpx;
+  height: 90rpx;
   width: 100rpx;
   text-align: center;
 }

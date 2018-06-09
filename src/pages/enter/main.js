@@ -6,7 +6,7 @@ app.$mount()
 
 export default {
   config: {
-    navigationBarTitleText: '画板房间',
+    navigationBarTitleText: 'Online画室',
     navigationBarBackgroundColor: '#6A7D8E',
     enablePullDownRefresh:true
   }

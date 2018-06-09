@@ -69,7 +69,8 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a(__WEBPACK_IMPORTED_MOD
 app.$mount();
 /* harmony default export */ __webpack_exports__["default"] = ({
   config: {
-    navigationBarTitleText: '小画板'
+    navigationBarTitleText: 'Online画室',
+    navigationBarBackgroundColor: '#6A7D8E'
   }
 });
 
@@ -269,8 +270,28 @@ var util = __webpack_require__(8);
 
     //选择动作类型
     choseType: function choseType(index) {
-      this.chosen = this.types[index];
-      if (this.chosen === "clear") {
+      var _this = this;
+
+      if (this.types[index] === "clear") {
+        wx.showModal({
+          title: "提示",
+          content: "是否清空屏幕",
+          success: function success(res) {
+            if (res.confirm) {
+              console.log("用户点击确定");
+              _this.sendMessage("speak", {
+                "room-id": _this.roomId,
+                action: 2,
+                data: {
+                  type: 4
+                }
+              });
+              _this.clearCanvas();
+            } else if (res.cancel) {
+              console.log("用户点击取消");
+            }
+          }
+        });
         // this.ctx.fillRect(0, 0, this.width, this.height);
         // this.ctx.setFillStyle("white");
         // this.ctx.clearRect(0, 0, this.width, this.height);
@@ -279,14 +300,8 @@ var util = __webpack_require__(8);
         //   reserve: true,
         //   actions: this.ctx.getActions() // 获取绘图动作数组
         // });
-        this.sendMessage("speak", {
-          "room-id": this.roomId,
-          action: 2,
-          data: {
-            type: 4
-          }
-        });
-        this.clearCanvas();
+      } else {
+        this.chosen = this.types[index];
       }
     },
 
@@ -303,33 +318,35 @@ var util = __webpack_require__(8);
 
     //定时器
     setTimer: function setTimer() {
-      var _this = this;
+      var _this2 = this;
 
       this.timer = setTimeout(function () {
-        _this.timer = null;
+        _this2.timer = null;
       }, 8);
     },
 
     //监听tunnel
     listenTunnel: function listenTunnel() {
-      var _this2 = this;
+      var _this3 = this;
 
       var tunnel = this.tunnel;
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (data) {
-        if (_this2.identity !== "join") {
+        if (_this3.identity !== "join") {
           console.log("不是用户");
           return;
         }
-        _this2.recoverAction(data);
+        _this3.recoverAction(data);
       });
       tunnel.on("room", function (data) {
-        util.showBusy("恢复画布状态中");
-        _this2.recoverCanvas(data.room.data);
+        if (_this3.atCanvas) {
+          util.showBusy("恢复画布状态中");
+          _this3.recoverCanvas(data.room.data);
+        }
       });
       tunnel.on("reconnect", function () {
-        if (_this2.atCanvas) {
-          _this2.sendMessage("room", { "room-id": _this2.roomId });
+        if (_this3.atCanvas) {
+          _this3.sendMessage("room", { "room-id": _this3.roomId });
         }
       });
     },
@@ -441,8 +458,8 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
     style: ({
       'height': _vm.height + 'rpx',
       'width': _vm.width + 'rpx',
-      'left': (_vm.offsetX + 2) + 'rpx',
-      'top': (_vm.offsetY + 2) + 'rpx'
+      'left': (_vm.offsetX) + 'rpx',
+      'top': (_vm.offsetY) + 'rpx'
     }),
     attrs: {
       "canvas-id": "show",

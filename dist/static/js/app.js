@@ -77,8 +77,8 @@ app.$mount();
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: '画板',
-      navigationBarTextStyle: 'black'
+      navigationBarTitleText: 'Online画室',
+      navigationBarTextStyle: 'white'
     }
   }
 });
