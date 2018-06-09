@@ -1,5 +1,6 @@
 <template>
   <div class="enter">
+    <div class="newRoom room scanQrcode" @click="scanQrcode">扫码</div>
     <img :src="room.qrCode" alt="" class="Qrcode">
     <button class="enterRoom room" @click="enterCanvas">进入画板</button>
     <section class="members">
@@ -46,9 +47,11 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     console.log(options);
-    // options.id = 21;    
-    if (options.id) {
-      this.room.roomId = options.id;
+
+    // options.id = 21;
+    if (options.result) {
+      const id = options.result.split("=")[2];
+      this.room.roomId = id;
       this.changeIdentityStatus("join");
       this.tunnel.emit("join", { "room-id": this.room.roomId });
     }
@@ -66,6 +69,16 @@ export default {
       "changeIdentityStatus",
       "changeCanvasStatus"
     ]),
+    scanQrcode() {
+      wx.scanCode({
+        success: res => {
+          const id = res.result.split("=")[2];
+          this.room.roomId = id;
+          this.changeIdentityStatus("join");
+          this.tunnel.emit("join", { "room-id": this.room.roomId });
+        }
+      });
+    },
     enterCanvas() {
       if (this.identity === "created" || this.identity === "join") {
         wx.navigateTo({
@@ -86,7 +99,7 @@ export default {
     },
     //信道连接跟监听
     openTunnel() {
-      util.showBusy("信道建立中...");
+      util.showBusy("信道建立中...", 10000);
       // 创建信道，需要给定后台服务地址
       var tunnel = this.tunnel;
       // 监听信道内置消息，包括 connect/close/reconnecting/reconnect/error
@@ -109,13 +122,14 @@ export default {
 
       tunnel.on("reconnecting", () => {
         console.log("WebSocket 信道正在重连...");
-        util.showBusy("正在重连");
+        util.showBusy("信道正在重连...", 10000);
       });
 
       tunnel.on("reconnect", () => {
         console.log("WebSocket 信道重连成功");
         util.showSuccess("重连成功");
         this.changeStatus("connected");
+        this.sendMessage("room", { "room-id": this.room.roomId });
       });
       tunnel.on("errmsg", err => {
         //新建房间报错
@@ -131,6 +145,9 @@ export default {
         } else if (err.code === 40304) {
           util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");
+          this.room.qrcode = "";
+          this.room.members = [];
+          this.room.roomId = "";
         }
         console.log(err);
       });
@@ -138,6 +155,7 @@ export default {
       tunnel.on("create", data => {
         this.room.qrCode = "data:image/jpeg;base64," + data.room.qrcode;
         this.room.roomId = data.room.id;
+        this.sendMessage("room", { "room-id": this.room.roomId });
         console.log("create：", data);
         util.showTip("提示", "房间创建成功");
         this.changeIdentityStatus("created");
@@ -164,7 +182,7 @@ export default {
         console.log("join:", data);
         this.room.members = data.room.members;
         this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
-        this.changeIdentityStatus("join");
+        this.changeIdentityStatus('join');
       });
       //监听关闭房间信息
       tunnel.on("shut", data => {
@@ -188,13 +206,15 @@ export default {
       });
       //监听退出房间的信息
       tunnel.on("leave", data => {
-        if (!data.id) {
+        if (!data.room) {
           this.room.members = [];
           this.room.qrCode = "";
+          this.changeIdentityStatus("none");
           // util.showTip("提示", "你已经退出房间了");
+        } else {
+          this.room.members = data.room.members;
         }
         console.log("leave:", data);
-        this.changeIdentityStatus("none");
       });
     },
     sendMessage(type, data = {}) {
@@ -216,6 +236,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../scss/enter.scss";
+@import "../../style/enter.scss";
 </style>
 

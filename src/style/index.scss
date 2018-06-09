@@ -6,19 +6,20 @@ page {
   .show {
     position: absolute;
     border: 1px solid #000;
-    z-index: 2;
+    z-index: 22222;
     border-radius: 10px;
   }
   .show {
+    border: none;
     z-index: 1;
   }
   .types {
     width: 100%;
-    position: fixed;
+    position: absolute;
     display: flex;
     flex-direction: row;
     left: 0;
-    bottom: 0;
+    bottom: 10rpx;
     z-index: 99999999;
     color: #bbb;
     .type {

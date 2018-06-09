@@ -8,19 +8,20 @@ page .canvas.data-v-566fd662,
 page .show.data-v-566fd662 {
   position: absolute;
   border: 2rpx solid #000;
-  z-index: 2;
+  z-index: 22222;
   border-radius: 20rpx;
 }
 page .show.data-v-566fd662 {
+  border: none;
   z-index: 1;
 }
 page .types.data-v-566fd662 {
   width: 100%;
-  position: fixed;
+  position: absolute;
   display: flex;
   flex-direction: row;
   left: 0;
-  bottom: 0;
+  bottom: 10rpx;
   z-index: 99999999;
   color: #bbb;
 }

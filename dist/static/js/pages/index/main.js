@@ -4,8 +4,8 @@ global.webpackJsonp([2],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__ = __webpack_require__(31);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
@@ -23,8 +23,8 @@ var __vue_scopeId__ = "data-v-566fd662"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_script_index_0_index_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_template_compiler_index_id_data_v_566fd662_hasScoped_true_transformToRequire_video_src_source_src_img_src_image_xlink_href_node_modules_mpvue_loader_1_0_14_mpvue_loader_lib_selector_type_template_index_0_index_vue__["a" /* default */],
   __vue_styles__,
   __vue_scopeId__,
   __vue_module_identifier__
@@ -35,7 +35,7 @@ if (Component.options.functional) {console.error("[vue-loader] index.vue: functi
 
 /* hot reload */
 if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
+  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
   module.hot.accept()
@@ -103,6 +103,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -112,10 +120,11 @@ var util = __webpack_require__(8);
 /* harmony default export */ __webpack_exports__["a"] = ({
   mounted: function mounted() {
     //调用监听服务器返回
+    console.log(this.identity);
     this.listenTunnel();
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
-    this.ctx.setLineWidth(1);
+    this.ctx.setLineWidth(2);
     this.ctx.setLineCap("round"); // 让线条圆润
   },
   onLoad: function onLoad(option) {
@@ -133,15 +142,17 @@ var util = __webpack_require__(8);
       prevPosition: [0, 0],
       startX: 0,
       startY: 0,
-      height: 1100,
-      width: 1440,
+      height: 1080,
+      width: 2880,
       offsetX: 0,
       offsetY: 0,
       timer: null,
       types: ["draw", "move", "eraser", "clear"],
       chosen: "draw",
       time: 0,
-      roomId: ""
+      roomId: "",
+      drawWidth: 1,
+      eraserWidth: 20
     };
   },
 
@@ -153,10 +164,8 @@ var util = __webpack_require__(8);
         return;
       }
       this.prevPosition = [e.touches[0].x, e.touches[0].y];
-      this.startX = e.touches[0].x;
-      this.startY = e.touches[0].y;
-      this.begin = true;
-      this.ctx.beginPath();
+      this.startX = ~~(e.touches[0].x + 0.5);
+      this.startY = ~~(e.touches[0].y + 0.5);
       this.drawArr.push({
         x: this.startX,
         y: this.startY
@@ -168,36 +177,45 @@ var util = __webpack_require__(8);
       if (this.identity !== "created") {
         return;
       }
-      var x = ~~(0.5 + e.touches[0].x);
-      var y = ~~(e.touches[0].y + 0.5);
+
       //判断是单手指
       if (this.chosen === "draw" || this.chosen === "eraser") {
         if (this.chosen === "draw") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(1);
+          this.ctx.setLineWidth(this.drawWidth);
         } else if (this.chosen == "eraser") {
-          this.ctx.setStrokeStyle("#ffffff");
-          this.ctx.setLineWidth(10);
+          this.ctx.setStrokeStyle("white");
+          this.ctx.setLineWidth(this.eraserWidth);
         }
+        var x = ~~(e.touches[0].x + 0.5);
+        var y = ~~(e.touches[0].y + 0.5);
+        this.ctx.setLineJoin("round");
         this.ctx.setLineCap("round"); // 让线条圆润
-        if (this.begin) {
-          this.ctx.moveTo(this.startX, this.startY);
-          this.startX = x;
-          this.startY = y;
-          this.ctx.lineTo(this.startX, this.startY);
-          this.ctx.stroke();
-          this.ctx.closePath();
-          wx.drawCanvas({
-            canvasId: "Canvas",
-            reserve: true,
-            actions: this.ctx.getActions() // 获取绘图动作数组
-          });
-          this.ctx.clearActions();
-          this.drawArr.push({
-            x: this.startX,
-            y: this.startY
-          });
+        this.startX = x;
+        this.startY = y;
+        this.drawArr.push({
+          x: this.startX,
+          y: this.startY
+        });
+        var p1 = this.drawArr[0];
+        var p2 = this.drawArr[1];
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        for (var i = 1; i < this.drawArr.length; i++) {
+          var midPoint = this.midPoint(p1, p2);
+          this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+          p1 = this.drawArr[i];
+          p2 = this.drawArr[i + 1];
         }
+        this.ctx.lineTo(p1.x, p1.y);
+        this.ctx.stroke();
+        this.ctx.closePath();
+        wx.drawCanvas({
+          canvasId: "Canvas",
+          reserve: false,
+          actions: this.ctx.getActions() // 获取绘图动作数组
+        });
+        this.ctx.clearActions();
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         // this.offsetY += e.touches[0].y - this.prevPosition[1];
@@ -209,6 +227,7 @@ var util = __webpack_require__(8);
         return;
       }
       if (this.chosen === "draw") {
+        this.drawCanvas(this.drawWidth, "#000000", this.drawArr);
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -231,6 +250,7 @@ var util = __webpack_require__(8);
           }
         });
       } else if (this.chosen === "eraser") {
+        this.drawCanvas(this.eraserWidth, "#ffffff", this.drawArr);
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -271,6 +291,17 @@ var util = __webpack_require__(8);
       }
     },
 
+    //二次贝塞尔中间点计算
+    midPoint: function midPoint(start, end) {
+      var x = (start.x + end.x) / 2;
+      var y = (start.y + end.y) / 2;
+      var cp = {
+        x: x,
+        y: y
+      };
+      return cp;
+    },
+
     //定时器
     setTimer: function setTimer() {
       var _this = this;
@@ -288,6 +319,7 @@ var util = __webpack_require__(8);
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", function (data) {
         if (_this2.identity !== "join") {
+          console.log("不是用户");
           return;
         }
         _this2.recoverAction(data);
@@ -295,6 +327,11 @@ var util = __webpack_require__(8);
       tunnel.on("room", function (data) {
         util.showBusy("恢复画布状态中");
         _this2.recoverCanvas(data.room.data);
+      });
+      tunnel.on("reconnect", function () {
+        if (_this2.atCanvas) {
+          _this2.sendMessage("room", { "room-id": _this2.roomId });
+        }
       });
     },
 
@@ -306,25 +343,32 @@ var util = __webpack_require__(8);
 
       this.ctx.setStrokeStyle(color);
       this.ctx.setLineWidth(width);
+      this.ctx.setLineJoin("round");
+      this.ctx.setLineCap("round"); // 让线条圆润
+      var p1 = drawArr[0];
+      var p2 = drawArr[1];
       this.ctx.beginPath();
-
-      var _drawArr$shift = drawArr.shift(),
-          x = _drawArr$shift.x,
-          y = _drawArr$shift.y;
-
-      this.ctx.moveTo(x, y);
-      for (var i = 0; i < drawArr.length; i++) {
-        var item = drawArr[i];
-        this.ctx.lineTo(item.x, item.y);
-        this.ctx.stroke();
+      this.ctx.moveTo(p1.x, p1.y);
+      for (var i = 1; i < drawArr.length; i++) {
+        var midPoint = this.midPoint(p1, p2);
+        this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+        p1 = drawArr[i];
+        p2 = drawArr[i + 1];
       }
+      this.ctx.lineTo(p1.x, p1.y);
+      this.ctx.stroke();
       this.ctx.closePath();
       wx.drawCanvas({
-        canvasId: "Canvas",
+        canvasId: "show",
         reserve: true,
         actions: this.ctx.getActions() // 获取绘图动作数组
       });
       this.ctx.clearActions();
+      wx.drawCanvas({
+        canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
     },
     recoverCanvas: function recoverCanvas(data) {
       for (var index = 0; index < data.length; index++) {
@@ -335,13 +379,13 @@ var util = __webpack_require__(8);
       var type = data.data.type;
       if (type === 1) {
         var drawArr = data.data.data.drawArr;
-        this.drawCanvas(1, "#000000", drawArr);
+        this.drawCanvas(this.drawWidth, "#000000", drawArr);
       } else if (type === 2) {
         var offsetX = data.data.data.offsetX;
         this.offsetX = offsetX;
       } else if (type === 3) {
         var _drawArr = data.data.data.drawArr;
-        this.drawCanvas(10, "#ffffff", _drawArr);
+        this.drawCanvas(this.eraserWidth, "#ffffff", _drawArr);
       } else if (type === 4) {
         this.clearCanvas();
       }
@@ -349,6 +393,11 @@ var util = __webpack_require__(8);
     clearCanvas: function clearCanvas() {
       wx.drawCanvas({
         canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
+      wx.drawCanvas({
+        canvasId: "show",
         reserve: false,
         actions: [] // 获取绘图动作数组
       });
@@ -390,6 +439,17 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
   return _c('div', {
     staticClass: "index"
   }, [_c('canvas', {
+    style: ({
+      'height': _vm.height + 'rpx',
+      'width': _vm.width + 'rpx',
+      'left': (_vm.offsetX + 2) + 'rpx',
+      'top': (_vm.offsetY + 2) + 'rpx'
+    }),
+    attrs: {
+      "canvas-id": "show",
+      "disable-scroll": "true"
+    }
+  }), _vm._v(" "), _c('canvas', {
     ref: 'canvas',
     staticClass: "canvas",
     style: ({
@@ -436,7 +496,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-566fd662", esExports)
+     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-566fd662", esExports)
   }
 }
 

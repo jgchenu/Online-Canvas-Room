@@ -1,6 +1,12 @@
 <template>
 <div class="index">
 
+     <canvas  canvas-id="show" 
+   :style="{'height'
+   :height+'rpx','width'
+   :width+'rpx','left':(offsetX+2)+'rpx','top':(offsetY+2)+'rpx'}" 
+   disable-scroll="true"  
+   />
    <canvas 
    canvas-id="Canvas" 
    :style="{'height'
@@ -10,7 +16,9 @@
    @touchstart="touchStart" 
    @touchmove="touchMove"
    @touchend="touchEnd"
-   :ref="'canvas'" class="canvas" />
+   :ref="'canvas'" class="canvas" 
+   />
+
   <aside class="types" @click="choseType" v-if="identity==='created'">
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
       {{item}}
@@ -27,10 +35,11 @@ var util = require("../../utils/index.js");
 export default {
   mounted() {
     //调用监听服务器返回
+    console.log(this.identity);
     this.listenTunnel();
     this.ctx = wx.createContext();
     this.ctx.setStrokeStyle("#000000");
-    this.ctx.setLineWidth(1);
+    this.ctx.setLineWidth(2);
     this.ctx.setLineCap("round"); // 让线条圆润
   },
   onLoad(option) {
@@ -48,15 +57,17 @@ export default {
       prevPosition: [0, 0],
       startX: 0,
       startY: 0,
-      height: 1100,
-      width: 1440,
+      height: 1080,
+      width: 2880,
       offsetX: 0,
       offsetY: 0,
       timer: null,
       types: ["draw", "move", "eraser", "clear"],
       chosen: "draw",
       time: 0,
-      roomId: ""
+      roomId: "",
+      drawWidth: 1,
+      eraserWidth: 20
     };
   },
   components: {},
@@ -69,10 +80,8 @@ export default {
         return;
       }
       this.prevPosition = [e.touches[0].x, e.touches[0].y];
-      this.startX = e.touches[0].x;
-      this.startY = e.touches[0].y;
-      this.begin = true;
-      this.ctx.beginPath();
+      this.startX = ~~(e.touches[0].x + 0.5);
+      this.startY = ~~(e.touches[0].y + 0.5);
       this.drawArr.push({
         x: this.startX,
         y: this.startY
@@ -83,36 +92,45 @@ export default {
       if (this.identity !== "created") {
         return;
       }
-      let x = ~~(0.5 + e.touches[0].x);
-      let y = ~~(e.touches[0].y + 0.5);
+
       //判断是单手指
       if (this.chosen === "draw" || this.chosen === "eraser") {
         if (this.chosen === "draw") {
           this.ctx.setStrokeStyle("#000000");
-          this.ctx.setLineWidth(1);
+          this.ctx.setLineWidth(this.drawWidth);
         } else if (this.chosen == "eraser") {
-          this.ctx.setStrokeStyle("#ffffff");
-          this.ctx.setLineWidth(10);
+          this.ctx.setStrokeStyle("white");
+          this.ctx.setLineWidth(this.eraserWidth);
         }
+        let x = ~~(e.touches[0].x + 0.5);
+        let y = ~~(e.touches[0].y + 0.5);
+        this.ctx.setLineJoin("round");
         this.ctx.setLineCap("round"); // 让线条圆润
-        if (this.begin) {
-          this.ctx.moveTo(this.startX, this.startY);
-          this.startX = x;
-          this.startY = y;
-          this.ctx.lineTo(this.startX, this.startY);
-          this.ctx.stroke();
-          this.ctx.closePath();
-          wx.drawCanvas({
-            canvasId: "Canvas",
-            reserve: true,
-            actions: this.ctx.getActions() // 获取绘图动作数组
-          });
-          this.ctx.clearActions();
-          this.drawArr.push({
-            x: this.startX,
-            y: this.startY
-          });
+        this.startX = x;
+        this.startY = y;
+        this.drawArr.push({
+          x: this.startX,
+          y: this.startY
+        });
+        let p1 = this.drawArr[0];
+        let p2 = this.drawArr[1];
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        for (let i = 1; i < this.drawArr.length; i++) {
+          let midPoint = this.midPoint(p1, p2);
+          this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+          p1 = this.drawArr[i];
+          p2 = this.drawArr[i + 1];
         }
+        this.ctx.lineTo(p1.x, p1.y);
+        this.ctx.stroke();
+        this.ctx.closePath();
+        wx.drawCanvas({
+          canvasId: "Canvas",
+          reserve: false,
+          actions: this.ctx.getActions() // 获取绘图动作数组
+        });
+        this.ctx.clearActions();
       } else if (this.chosen === "move") {
         this.offsetX += e.touches[0].x - this.prevPosition[0];
         // this.offsetY += e.touches[0].y - this.prevPosition[1];
@@ -127,6 +145,7 @@ export default {
         return;
       }
       if (this.chosen === "draw") {
+        this.drawCanvas(this.drawWidth, "#000000", this.drawArr);
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -149,6 +168,7 @@ export default {
           }
         });
       } else if (this.chosen === "eraser") {
+        this.drawCanvas(this.eraserWidth, "#ffffff", this.drawArr);
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
@@ -185,6 +205,16 @@ export default {
         this.clearCanvas();
       }
     },
+    //二次贝塞尔中间点计算
+    midPoint(start, end) {
+      let x = (start.x + end.x) / 2;
+      let y = (start.y + end.y) / 2;
+      var cp = {
+        x: x,
+        y: y
+      };
+      return cp;
+    },
     //定时器
     setTimer() {
       this.timer = setTimeout(() => {
@@ -197,6 +227,7 @@ export default {
       // 监听自定义消息（服务器进行推送）
       tunnel.on("speak", data => {
         if (this.identity !== "join") {
+          console.log("不是用户");
           return;
         }
         this.recoverAction(data);
@@ -205,26 +236,42 @@ export default {
         util.showBusy("恢复画布状态中");
         this.recoverCanvas(data.room.data);
       });
+      tunnel.on("reconnect", () => {
+        if (this.atCanvas) {
+          this.sendMessage("room", { "room-id": this.roomId });
+        }
+      });
     },
     //绘画函数
     drawCanvas(width = 1, color = "#000000", drawArr = []) {
       this.ctx.setStrokeStyle(color);
       this.ctx.setLineWidth(width);
+      this.ctx.setLineJoin("round");
+      this.ctx.setLineCap("round"); // 让线条圆润
+      let p1 = drawArr[0];
+      let p2 = drawArr[1];
       this.ctx.beginPath();
-      const { x, y } = drawArr.shift();
-      this.ctx.moveTo(x, y);
-      for (var i = 0; i < drawArr.length; i++) {
-        var item = drawArr[i];
-        this.ctx.lineTo(item.x, item.y);
-        this.ctx.stroke();
+      this.ctx.moveTo(p1.x, p1.y);
+      for (let i = 1; i < drawArr.length; i++) {
+        let midPoint = this.midPoint(p1, p2);
+        this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+        p1 = drawArr[i];
+        p2 = drawArr[i + 1];
       }
+      this.ctx.lineTo(p1.x, p1.y);
+      this.ctx.stroke();
       this.ctx.closePath();
       wx.drawCanvas({
-        canvasId: "Canvas",
+        canvasId: "show",
         reserve: true,
         actions: this.ctx.getActions() // 获取绘图动作数组
       });
       this.ctx.clearActions();
+      wx.drawCanvas({
+        canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
     },
     recoverCanvas(data) {
       for (let index = 0; index < data.length; index++) {
@@ -235,13 +282,13 @@ export default {
       const type = data.data.type;
       if (type === 1) {
         const drawArr = data.data.data.drawArr;
-        this.drawCanvas(1, "#000000", drawArr);
+        this.drawCanvas(this.drawWidth, "#000000", drawArr);
       } else if (type === 2) {
         const offsetX = data.data.data.offsetX;
         this.offsetX = offsetX;
       } else if (type === 3) {
         const drawArr = data.data.data.drawArr;
-        this.drawCanvas(10, "#ffffff", drawArr);
+        this.drawCanvas(this.eraserWidth, "#ffffff", drawArr);
       } else if (type === 4) {
         this.clearCanvas();
       }
@@ -249,6 +296,11 @@ export default {
     clearCanvas() {
       wx.drawCanvas({
         canvasId: "Canvas",
+        reserve: false,
+        actions: [] // 获取绘图动作数组
+      });
+      wx.drawCanvas({
+        canvasId: "show",
         reserve: false,
         actions: [] // 获取绘图动作数组
       });
@@ -273,5 +325,5 @@ export default {
   store
 };
 </script><style scoped lang='scss'>
-@import "../../scss/index.scss";
+@import "../../style/index.scss";
 </style>

@@ -16,10 +16,10 @@ const formatNumber = n => {
 
 
 // 显示繁忙提示
-var showBusy = text => wx.showToast({
+var showBusy = (text,time=1000) => wx.showToast({
   title: text,
   icon: 'loading',
-  duration: 1000
+  duration: time
 })
 
 // 显示成功提示
