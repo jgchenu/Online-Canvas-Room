@@ -1,30 +1,37 @@
 <template>
-  <div class="enter" v-if="tunnelStatus==='connected'">
-    <div class="newRoom room scanQrcode" @click="scanQrcode">扫码</div>
-    <img :src="room.qrCode" alt="" class="Qrcode">
-    <p v-if="room.qrCode" class="tip">邀请好友扫码加入房间</p>
-    <button class="enterRoom room" @click="enterCanvas">进入画板</button>
-    <section class="members">
-          <img v-for="(item,index) in room.members" :key="index" :src="item.avatarUrl" />
-    </section>
-    <footer
-      class="newRoom room"
-      @click="createRoom"
-      v-if="identity==='none'"
-      >新建房间
-    </footer>
-    <footer
-      class="newRoom room closeRoom"
-      @click="closeRoom"
-      v-else-if="identity==='created'"
-      >关闭房间
-    </footer>
-        <footer
-      class="newRoom room quitRoom"
-      @click="quitRoom"
-      v-else-if="identity==='join'"
-      >退出房间
-    </footer>
+  <div>
+    <p v-if="tunnelStatus!=='connected'" class="tip3">长时间加载不出来？请下拉页面重新加载信息</p>
+    <div class="enter" v-if="tunnelStatus==='connected'">
+      <img src="http://test.jgchen.xin/canvas/扫码.png" alt="扫码" class="scanQrcode" @click="scanQrcode">
+      <img :src="room.qrCode" alt="" class="Qrcode">
+      <p class="tip">{{tip}}</p>
+      <button class="enterRoom room"
+      @click="enterCanvas"
+      v-if="identity==='created'||identity==='join'">
+      进入画板</button>
+      <section class="members" v-if="identity==='created'||identity==='join'">
+            <img v-for="(item,index) in room.members" :key="index" :src="item.avatarUrl" />
+      </section>
+      <footer
+        class="newRoom room"
+        @click="createRoom"
+        v-if="identity==='none'"
+        >新建房间
+      </footer>
+      <footer
+        class="newRoom room closeRoom"
+        @click="closeRoom"
+        v-else-if="identity==='created'"
+        >关闭房间
+      </footer>
+          <footer
+        class="newRoom room quitRoom"
+        @click="quitRoom"
+        v-else-if="identity==='join'"
+        >退出房间
+      </footer>
+      <p class="tip2" v-if="identity==='none'">Tips:在右上方扫码加入别人的房间</p>
+    </div>
   </div>
 </template>
 <script>
@@ -60,13 +67,22 @@ export default {
   onPullDownRefresh() {
     this.closeTunnel();
     this.openTunnel();
-
+    wx.getSetting({
+      success: res => {
+        if (!res.authSetting["scope.userInfo"]) {
+          wx.navigateTo({
+            url: "../loginButton/main"
+          });
+        }
+      }
+    });
     wx.stopPullDownRefresh();
   },
   data() {
     return {
       user: { roomId: "" },
-      room: { qrCode: "", roomId: "", members: [] }
+      room: { qrCode: "", roomId: "", members: [] },
+      tip: "您需要创建一个房间后才可以加入自己的在线画板"
     };
   },
   methods: {
@@ -172,6 +188,7 @@ export default {
         console.log("create：", data);
         util.showTip("提示", "房间创建成功");
         this.changeIdentityStatus("created");
+        this.tip = "邀请好友扫码加入房间";
       });
       tunnel.on("error", err => {
         console.log("error:", err);
@@ -187,7 +204,7 @@ export default {
           }`;
           this.changeIdentityStatus("created");
           this.sendMessage("room", { "room-id": this.room.roomId });
-          this.user.roomId=data.room.created[0].id;
+          this.user.roomId = data.room.created[0].id;
         }
         console.log("user:", data);
       });

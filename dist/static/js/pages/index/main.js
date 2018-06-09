@@ -268,10 +268,8 @@ var util = __webpack_require__(8);
     },
 
     //选择动作类型
-    choseType: function choseType(_ref) {
-      var target = _ref.target;
-
-      this.chosen = this.types[target.id];
+    choseType: function choseType(index) {
+      this.chosen = this.types[index];
       if (this.chosen === "clear") {
         // this.ctx.fillRect(0, 0, this.width, this.height);
         // this.ctx.setFillStyle("white");
@@ -470,13 +468,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       "touchend": _vm.touchEnd
     }
   }), _vm._v(" "), (_vm.identity === 'created') ? _c('aside', {
-    staticClass: "types",
-    attrs: {
-      "eventid": '1'
-    },
-    on: {
-      "click": _vm.choseType
-    }
+    staticClass: "types"
   }, _vm._l((_vm.types), function(item, index) {
     return _c('div', {
       key: index,
@@ -485,9 +477,19 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
         chosen: item == _vm.chosen
       },
       attrs: {
-        "id": index
+        "eventid": '1-' + index
+      },
+      on: {
+        "click": function($event) {
+          _vm.choseType(index)
+        }
       }
-    }, [_vm._v("\r\n      " + _vm._s(item) + "\r\n    ")])
+    }, [_c('img', {
+      attrs: {
+        "src": 'http://test.jgchen.xin/canvas/' + item + '.png',
+        "alt": ""
+      }
+    })])
   })) : _vm._e(), _vm._v(" "), (_vm.identity === 'join') ? _c('p', {
     staticClass: "tip"
   }, [_vm._v("只有房主可以操作哦")]) : _vm._e()], 1)

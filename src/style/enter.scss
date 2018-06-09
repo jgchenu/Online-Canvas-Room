@@ -4,15 +4,29 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  .scanQrcode {
+    width: 80rpx;
+    height: 80rpx;
+    line-height: 60rpx;
+    position: absolute;
+    right: 40rpx;
+    top: 10rpx;
+  }
   .Qrcode {
     margin: 60rpx auto 20rpx auto;
     width: 400rpx;
     height: 400rpx;
     border-radius: 10rpx;
   }
-  .tip{
+  .tip,
+  .tip2 {
+    width: 400rpx;
+    margin: 60rpx auto;
     font-size: 30rpx;
-    margin-bottom: 30rpx;
+    text-align: center;
+  }
+  .tip2 {
+    font-size: 24rpx;
   }
   .members {
     margin: 40rpx auto;
@@ -36,14 +50,11 @@
     text-align: center;
     font-size: 24rpx;
   }
-  .scanQrcode{
-    background: #8B9CAC;
-    width: 80rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    position: absolute;
-    right: 20rpx;
-    top: 10rpx;
-  }
 }
 
+.tip3 {
+  text-align: center;
+  margin-top: 200rpx;
+  font-size: 30rpx;
+  color: #8B9CAC;
+}

@@ -19,9 +19,9 @@
    :ref="'canvas'" class="canvas" 
    />
 
-  <aside class="types" @click="choseType" v-if="identity==='created'">
-    <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" :id="index">
-      {{item}}
+  <aside class="types" v-if="identity==='created'">
+    <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" @click="choseType(index)">
+      <img :src="'http://test.jgchen.xin/canvas/'+item+'.png'" alt="">
     </div>
   </aside>
   <p v-if="identity==='join'" class="tip">只有房主可以操作哦</p>
@@ -185,8 +185,8 @@ export default {
       this.begin = false;
     },
     //选择动作类型
-    choseType({ target }) {
-      this.chosen = this.types[target.id];
+    choseType(index) {
+      this.chosen = this.types[index];
       if (this.chosen === "clear") {
         // this.ctx.fillRect(0, 0, this.width, this.height);
         // this.ctx.setFillStyle("white");

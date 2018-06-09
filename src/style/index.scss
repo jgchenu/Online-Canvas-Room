@@ -4,10 +4,12 @@ page {
   position: relative;
   .canvas,
   .show {
+    box-shadow: #aaa 0 0 10px;
     position: absolute;
-    border: 1px solid #000;
     z-index: 22222;
-    border-radius: 10px;
+    border-radius: 4rpx;
+    border-left: 1rpx solid #BFCCDC;
+    border-right: 1rpx solid #BFCCDC;
   }
   .show {
     border: none;
@@ -23,21 +25,31 @@ page {
     z-index: 99999999;
     color: #bbb;
     .type {
+      flex-direction: row;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex: 1;
-      display: inline-block; //   width: 140rpx;
+      margin: 0 32rpx;
       height: 100rpx;
-      line-height: 100rpx;
+      width: 100rpx;
       text-align: center; //   background: red;
+      // border: 1rpx solid #cccccc;
+      img {
+        width: 60rpx;
+        height: 60rpx;
+      }
     }
     .chosen {
-      color: aqua;
-      border-bottom: 4rpx solid #000;
-      color: #000;
+      border-color: #000;
+      background-color: #BFCCDC;
     }
   }
-  .tip{
-    text-align: center;
-    height: 100rpx;
-    line-height: 100rpx;
+  .tip {
+    width: 2880rpx;
+    background: #BFCCDC;
+    text-indent: 260rpx;
+    height: 130rpx;
+    line-height: 130rpx;
   }
 }
