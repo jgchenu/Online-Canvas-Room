@@ -111,6 +111,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
 
 
 
@@ -487,7 +488,9 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
         "id": index
       }
     }, [_vm._v("\r\n      " + _vm._s(item) + "\r\n    ")])
-  })) : _vm._e()], 1)
+  })) : _vm._e(), _vm._v(" "), (_vm.identity === 'join') ? _c('p', {
+    staticClass: "tip"
+  }, [_vm._v("只有房主可以操作哦")]) : _vm._e()], 1)
 }
 var staticRenderFns = []
 render._withStripped = true

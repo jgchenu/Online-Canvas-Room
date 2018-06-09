@@ -37,3 +37,8 @@ page .types .chosen.data-v-566fd662 {
   border-bottom: 4rpx solid #000;
   color: #000;
 }
+page .tip.data-v-566fd662 {
+  text-align: center;
+  height: 100rpx;
+  line-height: 100rpx;
+}

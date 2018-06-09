@@ -5,5 +5,6 @@
     <view class="_aside data-v-566fd662 types" bindtap="handleProxy" wx:if="{{identity==='created'}}" data-eventid="{{'1'}}" data-comkey="{{$k}}">
       <view wx:key="index" key="{{index}}" class="_div data-v-566fd662 type {{[item == chosen ? 'chosen' : '']}}" id="{{index}}" wx:for="{{types}}" wx:for-index="index" wx:for-item="item"> {{item}} </view>
     </view>
+    <view wx:if="{{identity==='join'}}" class="_p data-v-566fd662 tip">只有房主可以操作哦</view>
   </view>
 </template>

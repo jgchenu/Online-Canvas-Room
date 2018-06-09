@@ -1,7 +1,8 @@
 <template>
-  <div class="enter">
+  <div class="enter" v-if="tunnelStatus==='connected'">
     <div class="newRoom room scanQrcode" @click="scanQrcode">扫码</div>
     <img :src="room.qrCode" alt="" class="Qrcode">
+    <p v-if="room.qrCode" class="tip">邀请好友扫码加入房间</p>
     <button class="enterRoom room" @click="enterCanvas">进入画板</button>
     <section class="members">
           <img v-for="(item,index) in room.members" :key="index" :src="item.avatarUrl" />
@@ -13,13 +14,13 @@
       >新建房间
     </footer>
     <footer
-      class="newRoom room"
+      class="newRoom room closeRoom"
       @click="closeRoom"
       v-else-if="identity==='created'"
       >关闭房间
     </footer>
         <footer
-      class="newRoom room"
+      class="newRoom room quitRoom"
       @click="quitRoom"
       v-else-if="identity==='join'"
       >退出房间
@@ -47,7 +48,6 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     // var scene = decodeURIComponent(options.scene);
     console.log(options);
-
     // options.id = 21;
     if (options.result) {
       const id = options.result.split("=")[2];
@@ -57,9 +57,15 @@ export default {
     }
     this.openTunnel();
   },
+  onPullDownRefresh() {
+    this.closeTunnel();
+    this.openTunnel();
 
+    wx.stopPullDownRefresh();
+  },
   data() {
     return {
+      user: { roomId: "" },
       room: { qrCode: "", roomId: "", members: [] }
     };
   },
@@ -105,6 +111,13 @@ export default {
       // 监听信道内置消息，包括 connect/close/reconnecting/reconnect/error
       tunnel.open();
       this.changeStatus("connecting");
+    },
+    closeTunnel() {
+      if (this.tunnel) {
+        this.tunnel.close();
+      }
+      util.showBusy("信道连接中...");
+      this.changeStatus("closed");
     },
     listenTunnel() {
       var tunnel = this.tunnel;
@@ -174,6 +187,7 @@ export default {
           }`;
           this.changeIdentityStatus("created");
           this.sendMessage("room", { "room-id": this.room.roomId });
+          this.user.roomId=data.room.created[0].id;
         }
         console.log("user:", data);
       });
@@ -182,7 +196,8 @@ export default {
         console.log("join:", data);
         this.room.members = data.room.members;
         this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
-        this.changeIdentityStatus('join');
+        this.room.roomId = data.room.id;
+        this.sendMessage("room", { "room-id": this.room.roomId });
       });
       //监听关闭房间信息
       tunnel.on("shut", data => {
@@ -210,10 +225,12 @@ export default {
           this.room.members = [];
           this.room.qrCode = "";
           this.changeIdentityStatus("none");
-          // util.showTip("提示", "你已经退出房间了");
+          this.sendMessage("room", { "room-id": this.user.roomId });
+          util.showTip("提示", "你已经退出房间了");
         } else {
           this.room.members = data.room.members;
         }
+
         console.log("leave:", data);
       });
     },

@@ -1,7 +1,7 @@
 <template>
 <div class="index">
-
-     <canvas  canvas-id="show" 
+  
+  <canvas  canvas-id="show" 
    :style="{'height'
    :height+'rpx','width'
    :width+'rpx','left':(offsetX+2)+'rpx','top':(offsetY+2)+'rpx'}" 
@@ -24,6 +24,7 @@
       {{item}}
     </div>
   </aside>
+  <p v-if="identity==='join'" class="tip">只有房主可以操作哦</p>
 </div>
 </template>
 <script>

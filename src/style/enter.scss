@@ -5,15 +5,20 @@
   justify-content: center;
   position: relative;
   .Qrcode {
-    margin: 60rpx auto;
+    margin: 60rpx auto 20rpx auto;
     width: 400rpx;
     height: 400rpx;
     border-radius: 10rpx;
+  }
+  .tip{
+    font-size: 30rpx;
+    margin-bottom: 30rpx;
   }
   .members {
     margin: 40rpx auto;
     width: 600rpx;
     height: 220rpx;
+    overflow: scroll;
     img {
       margin: 10rpx;
       width: 100rpx;
@@ -32,7 +37,10 @@
     font-size: 24rpx;
   }
   .scanQrcode{
-    width: 100rpx;
+    background: #8B9CAC;
+    width: 80rpx;
+    height: 60rpx;
+    line-height: 60rpx;
     position: absolute;
     right: 20rpx;
     top: 10rpx;
