@@ -20,9 +20,18 @@
    />
 
   <aside class="types" v-if="identity==='created'">
+
+    <picker mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="multiArray"  >
+        <div class="picker type" :style="{'font-size':drawWidth*5+16+'rpx','color':color}" style="border-radiu:50%;" >
+            ●
+        </div>
+    </picker>
+
     <div v-for="(item,index) in types" :key="index" :class="{chosen:item==chosen}" class="type" @click="choseType(index)">
       <img :src="'http://test.jgchen.xin/canvas/'+item+'.png'" :alt="item">
     </div>
+
+
   </aside>
   <div v-if="identity==='join'" class="tip">
     <p>保存画板 
@@ -47,7 +56,7 @@ export default {
     this.ctx = wx.createContext();
     //初始化画布背景色
     this.setBg();
-    this.ctx.setStrokeStyle("#000000");
+    this.ctx.setStrokeStyle(this.color);
     this.ctx.setLineWidth(2);
     this.ctx.setLineCap("round"); // 让线条圆润
   },
@@ -62,6 +71,22 @@ export default {
   },
   data() {
     return {
+      index: 0,
+      multiArray: [
+        [1, 2, 4, 6, 8, 10],
+        ["黑", "红", "橙", "黄", "绿", "蓝", "青", "紫"]
+      ],
+      colorArray: [
+        "#000000",
+        "#e74c3c",
+        "#e67e22",
+        "#f1c40f",
+        "#2ecc71",
+        "#3498db",
+        "#1abc9c",
+        "#9b59b6"
+      ],
+      multiIndex: [0, 0],
       drawArr: [],
       prevPosition: [0, 0],
       startX: 0,
@@ -76,11 +101,19 @@ export default {
       time: 0,
       roomId: "",
       drawWidth: 1,
-      eraserWidth: 20
+      eraserWidth: 20,
+      color: "#000000"
     };
   },
   components: {},
   methods: {
+    bindMultiPickerChange(e) {
+      console.log("picker发送选择改变，携带值为", e.target.value);
+      this.multiIndex = e.target.value;
+      this.drawWidth = this.multiArray[0][this.multiIndex[0]];
+      this.color = this.colorArray[this.multiIndex[1]];
+      console.log(this.drawWidth, this.color);
+    },
     getAuth() {
       wx.getSetting({
         success: res => {
@@ -131,7 +164,7 @@ export default {
       //判断是单手指
       if (this.chosen === "draw" || this.chosen === "eraser") {
         if (this.chosen === "draw") {
-          this.ctx.setStrokeStyle("#000000");
+          this.ctx.setStrokeStyle(this.color);
           this.ctx.setLineWidth(this.drawWidth);
         } else if (this.chosen == "eraser") {
           this.ctx.setStrokeStyle("white");
@@ -180,14 +213,16 @@ export default {
         return;
       }
       if (this.chosen === "draw") {
-        this.drawCanvas(this.drawWidth, "#000000", this.drawArr);
+        this.drawCanvas(this.drawWidth, this.color, this.drawArr);
         this.sendMessage("speak", {
           "room-id": this.roomId,
           action: 1,
           data: {
             type: 1,
             data: {
-              drawArr: this.drawArr
+              drawArr: this.drawArr,
+              color: this.color,
+              drawWidth: this.drawWidth
             }
           }
         });
@@ -304,6 +339,7 @@ export default {
         if (this.atCanvas) {
           util.showBusy("恢复画布状态中");
           this.recoverCanvas(data.room.data);
+          console.log(data);
         }
       });
       tunnel.on("reconnect", () => {
@@ -352,7 +388,9 @@ export default {
       const type = data.data.type;
       if (type === 1) {
         const drawArr = data.data.data.drawArr;
-        this.drawCanvas(this.drawWidth, "#000000", drawArr);
+        const drawWidth = data.data.data.drawWidth;
+        const color = data.data.data.color;
+        this.drawCanvas(drawWidth, color, drawArr);
       } else if (type === 2) {
         const offsetX = data.data.data.offsetX;
         this.offsetX = offsetX;

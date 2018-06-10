@@ -35,7 +35,7 @@
 					"id": 0,
 					"name": "小程序码扫码编译",
 					"pathName": "pages/enter/main",
-					"query": "scene=s&id=21",
+					"query": "scene=t%3ds%26id%3d42",
 					"scene": "1047"
 				}
 			]

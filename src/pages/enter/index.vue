@@ -45,15 +45,22 @@ export default {
     this.listenTunnel();
     this.getAuth();
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
-    // var scene = decodeURIComponent(options.scene);
     console.log(options);
     // options.id = 21;
+    if (options.scene) {
+      var scene = decodeURIComponent(options.scene);
+      const id = scene.split("=")[2];
+      this.room.roomId = id;
+      this.changeIdentityStatus("join");
+      this.tunnel.emit("join", { "room-id": this.room.roomId });
+    }
     if (options.result) {
       const id = options.result.split("=")[2];
       this.room.roomId = id;
       this.changeIdentityStatus("join");
       this.tunnel.emit("join", { "room-id": this.room.roomId });
     }
+
     this.openTunnel();
   },
   onPullDownRefresh() {
@@ -212,8 +219,8 @@ export default {
       });
       //监听用户信息
       tunnel.on("user", data => {
-        this.changeStatus('connected');
-        util.showBusy('信道连接成功');
+        this.changeStatus("connected");
+        util.showBusy("信道连接成功");
         // this.members.push({ avatarUrl: data.information.avatarUrl });
         if (data.room && data.room.created[0]) {
           this.room.roomId =

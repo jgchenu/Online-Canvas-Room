@@ -32,14 +32,14 @@ page .types .type.data-v-566fd662 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 26rpx;
+  margin: 0 18rpx;
   height: 90rpx;
   width: 100rpx;
   text-align: center;
 }
 page .types .type ._img.data-v-566fd662 {
-  width: 60rpx;
-  height: 60rpx;
+  width: 50rpx;
+  height: 50rpx;
 }
 page .types .chosen.data-v-566fd662 {
   border-color: #000;
