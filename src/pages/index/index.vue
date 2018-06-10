@@ -4,7 +4,7 @@
   <canvas  canvas-id="show" 
    :style="{'height'
    :height+'rpx','width'
-   :width+'rpx','left':(offsetX)+'rpx','top':(offsetY)+'rpx'}" 
+   :width+'rpx','left':(offsetX+1)+'rpx','top':(offsetY)+'rpx'}" 
    disable-scroll="true"  
    />
    <canvas 
