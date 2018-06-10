@@ -32,7 +32,7 @@ page .types .type.data-v-566fd662 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 40rpx;
+  margin: 0 26rpx;
   height: 90rpx;
   width: 100rpx;
   text-align: center;
@@ -48,15 +48,23 @@ page .types .chosen.data-v-566fd662 {
 page .tip.data-v-566fd662 {
   width: 2880rpx;
   background: #BFCCDC;
-  text-indent: 100rpx;
-  height: 130rpx;
-  line-height: 130rpx;
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 130rpx;
+}
+page .tip ._p.data-v-566fd662 {
+  width: 750rpx;
+  height: 130rpx;
+  display: flex;
+  flex-direction: row;
+  line-height: 130rpx;
+  justify-content: center;
   align-items: center;
 }
-page .tip ._img.data-v-566fd662 {
+page .tip ._p ._img.data-v-566fd662 {
   margin-left: 20rpx;
-  width: 60rpx;
-  height: 60rpx;
+  width: 40rpx;
+  height: 40rpx;
 }

@@ -74,7 +74,7 @@ export default {
       wx.getSetting({
         success: res => {
           if (!res.authSetting["scope.userInfo"]) {
-            wx.navigateTo({
+            wx.redirectTo({
               url: "../loginButton/main"
             });
           }
@@ -161,7 +161,7 @@ export default {
       });
 
       tunnel.on("close", () => {
-        util.showSuccess("信道已断开");
+        util.showBusy("信道已断开");
         console.log("WebSocket 信道已断开");
         this.changeStatus("closed");
       });
@@ -212,6 +212,8 @@ export default {
       });
       //监听用户信息
       tunnel.on("user", data => {
+        this.changeStatus('connected');
+        util.showBusy('信道连接成功');
         // this.members.push({ avatarUrl: data.information.avatarUrl });
         if (data.room && data.room.created[0]) {
           this.room.roomId =

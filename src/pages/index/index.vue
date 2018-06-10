@@ -24,10 +24,13 @@
       <img :src="'http://test.jgchen.xin/canvas/'+item+'.png'" :alt="item">
     </div>
   </aside>
-  <p v-if="identity==='join'" class="tip">只有保存可以操作哦 
+  <div v-if="identity==='join'" class="tip">
+    <p>保存画板 
     <img :src="'http://test.jgchen.xin/canvas/save.png'"
-    :alt="item"
-    @click="choseType(4)">(点击保存)</p>
+    :alt="'save'"
+    @click="choseType(4)">
+    </p>
+  </div>
 </div>
 </template>
 <script>
