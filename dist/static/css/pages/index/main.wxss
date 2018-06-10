@@ -14,7 +14,7 @@ page .show.data-v-566fd662 {
   border-right: 1rpx solid #BFCCDC;
 }
 page .show.data-v-566fd662 {
-  border: none;
+  border-color: #ffffff;
   z-index: 1;
 }
 page .types.data-v-566fd662 {
