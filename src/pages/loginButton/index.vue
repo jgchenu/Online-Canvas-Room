@@ -12,27 +12,58 @@ var util = require("../../utils/index.js");
 export default {
   methods: {
     onGetUserinfo(e) {
-      let msg = e.target.errMsg;
-      console.log(e);
-      if (msg === "getUserInfo:ok") {
-        wx.redirectTo({
-          url: "../enter/main"
-        });
-      } else {
-        new Promise((resolve, reject) => {
-          util.showBusy("需要授权才能使用~");
-          setTimeout(() => {
-            resolve();
-          }, 1000);
-        }).then(() => {
-          wx.openSetting({
-            success: res => {
-              console.log(res);
-            }
-          });
-        });
-      }
+      wx.getSetting({
+        success: res => {
+          if (res.authSetting["scope.userInfo"]) {
+            wx.navigateBack({
+              delta: 1
+            });
+          } else {
+            new Promise((resolve, reject) => {
+              util.showBusy("需要授权使用");
+              setTimeout(() => {
+                resolve();
+              }, 1000);
+            }).then(() => {
+              wx.openSetting({
+                success: res => {
+                  console.log(res);
+                }
+              });
+            });
+          }
+        }
+      });
+      // let msg = e.target.errMsg;
+      // console.log(e);
+      // if (msg === "getUserInfo:ok") {
+      //   if (this.time === 1) {
+      //     wx.redirectTo({
+      //       url: "../enter/main"
+      //     });
+      //     this.time = -1;
+      //   }
+      //   this.time++;
+      // } else {
+      //   new Promise((resolve, reject) => {
+      //     util.showBusy("需要授权使用");
+      //     setTimeout(() => {
+      //       resolve();
+      //     }, 1000);
+      //   }).then(() => {
+      //     wx.openSetting({
+      //       success: res => {
+      //         console.log(res);
+      //       }
+      //     });
+      //   });
+      // }
     }
+  },
+  data() {
+    return {
+      time: 0
+    };
   }
 };
 </script>
@@ -50,15 +81,15 @@ export default {
     height: 80rpx;
     line-height: 80rpx;
     padding: 0 100rpx;
-    background: #8B9CAC;
+    background: #8b9cac;
     color: #fff;
   }
-  p{
+  p {
     margin-top: 200rpx;
-    color: #8B9CAC;
+    color: #8b9cac;
     text-align: center;
   }
-  img{
+  img {
     margin-top: 40rpx;
     border-radius: 50%;
     width: 200rpx;

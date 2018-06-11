@@ -42,26 +42,33 @@ import store from "../vuex/store.js";
 import { mapState, mapMutations } from "vuex";
 export default {
   onLoad(options) {
-    this.listenTunnel();
-    this.getAuth();
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     console.log(options);
+    this.options = options;
     // options.id = 21;
-    if (options.scene) {
-      var scene = decodeURIComponent(options.scene);
-      const id = scene.split("=")[2];
-      this.room.roomId = id;
-      this.changeIdentityStatus("join");
-      this.tunnel.emit("join", { "room-id": this.room.roomId });
-    }
-    if (options.result) {
-      const id = options.result.split("=")[2];
-      this.room.roomId = id;
-      this.changeIdentityStatus("join");
-      this.tunnel.emit("join", { "room-id": this.room.roomId });
-    }
-
-    this.openTunnel();
+  },
+  onShow() {
+    let callback = function() {
+      this.listenTunnel();
+      const options = this.options;
+      if (options.scene) {
+        var scene = decodeURIComponent(options.scene);
+        const id = scene.split("=")[2];
+        this.room.roomId = id;
+        this.changeIdentityStatus("join");
+        this.tunnel.emit("join", { "room-id": this.room.roomId });
+      }
+      if (options.result) {
+        const id = options.result.split("=")[2];
+        this.room.roomId = id;
+        this.changeIdentityStatus("join");
+        this.tunnel.emit("join", { "room-id": this.room.roomId });
+      }
+      if (this.tunnelStatus !== "connected") {
+        this.openTunnel();
+      }
+    }.bind(this);
+    this.getAuth(callback);
   },
   onPullDownRefresh() {
     this.closeTunnel();
@@ -73,17 +80,27 @@ export default {
     return {
       user: { roomId: "" },
       room: { qrCode: "", roomId: "", members: [] },
-      tip: "您需要创建一个房间后才可以加入自己的在线画板"
+      tip: "您需要创建一个房间后才可以加入自己的在线画板",
+      options: "",
+      callbackStatus:true
     };
   },
   methods: {
-    getAuth() {
+    getAuth(callback) {
       wx.getSetting({
         success: res => {
           if (!res.authSetting["scope.userInfo"]) {
-            wx.redirectTo({
+            this.callbackStatus=true;
+            wx.navigateTo({
               url: "../loginButton/main"
             });
+          } else {
+            if (this.callbackStatus) {
+              callback();
+              this.callbackStatus=false;
+            }
+            console.log("call");
+            
           }
         }
       });
@@ -96,10 +113,14 @@ export default {
     scanQrcode() {
       wx.scanCode({
         success: res => {
-          const id = res.result.split("=")[2];
-          this.room.roomId = id;
-          this.changeIdentityStatus("join");
-          this.tunnel.emit("join", { "room-id": this.room.roomId });
+          if (res.path) {
+            let scene = decodeURIComponent(res.path);
+            const id = scene.split("=")[3];
+            this.room.roomId = id;
+            this.changeIdentityStatus("join");
+            this.tunnel.emit("join", { "room-id": this.room.roomId });
+          }
+          console.log(res);
         }
       });
     },
@@ -198,15 +219,16 @@ export default {
         } else if (err.code === 40304) {
           // util.showTip("提示", "房间已经关闭");
           this.changeIdentityStatus("none");
-          this.room.qrcode = "";
+          this.room.qrCode = "";
           this.room.members = [];
           this.room.roomId = "";
+          this.tip = "您需要创建一个房间后才可以进入自己的在线画板";
         }
         console.log(err);
       });
       //新建房间
       tunnel.on("create", data => {
-        this.room.qrCode = "data:image/jpeg;base64," + data.room.qrcode;
+        this.room.qrCode = data.room.qrcode;
         this.room.roomId = data.room.id;
         this.sendMessage("room", { "room-id": this.room.roomId });
         console.log("create：", data);
@@ -225,9 +247,7 @@ export default {
         if (data.room && data.room.created[0]) {
           this.room.roomId =
             data.room && data.room.created && data.room.created[0].id;
-          this.room.qrCode = `data:image/jpeg;base64,${
-            data.room.created[0].qrcode
-          }`;
+          this.room.qrCode = data.room.created[0].qrcode;
           this.changeIdentityStatus("created");
           this.sendMessage("room", { "room-id": this.room.roomId });
           this.user.roomId = data.room.created[0].id;
@@ -238,7 +258,7 @@ export default {
       tunnel.on("join", data => {
         console.log("join:", data);
         this.room.members = data.room.members;
-        this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
+        this.room.qrCode = data.room.qrcode;
         this.room.roomId = data.room.id;
         this.sendMessage("room", { "room-id": this.room.roomId });
       });
@@ -249,14 +269,14 @@ export default {
         this.room.members = [];
         this.room.roomId = "";
         this.room.qrCode = "";
-        this.tip = "您需要创建一个房间后才可以加入自己的在线画板";
+        this.tip = "您需要创建一个房间后才可以进入自己的在线画板";
       });
       //监听房间的信息
       tunnel.on("room", data => {
         if (this.atCanvas) return;
         console.log("room", data);
         this.room.members = data.room.members;
-        this.room.qrCode = `data:image/jpeg;base64,${data.room.qrcode}`;
+        this.room.qrCode = data.room.qrcode;
         if (data.authority === 1) {
           this.changeIdentityStatus("created");
           this.tip = "邀请好友扫码加入房间";

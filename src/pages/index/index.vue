@@ -200,7 +200,12 @@ export default {
         });
         this.ctx.clearActions();
       } else if (this.chosen === "move") {
-        this.offsetX += e.touches[0].x - this.prevPosition[0];
+        this.time++;
+        if (this.time == 6) {
+          this.offsetX += (e.touches[0].x - this.prevPosition[0]) * 4;
+          this.time = 0;
+        }
+
         // this.offsetY += e.touches[0].y - this.prevPosition[1];
         this.prevPosition = [
           parseInt(e.touches[0].x),
