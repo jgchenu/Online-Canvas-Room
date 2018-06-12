@@ -45,25 +45,33 @@ export default {
     // options 中的 scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
     console.log(options);
     this.options = options;
+    if (this.options.scene||this.options.result) {
+      this.join = true;
+    }
     // options.id = 21;
   },
   onShow() {
     let callback = function() {
-      this.listenTunnel();
-      const options = this.options;
-      if (options.scene) {
-        var scene = decodeURIComponent(options.scene);
-        const id = scene.split("=")[2];
-        this.room.roomId = id;
-        this.changeIdentityStatus("join");
-        this.tunnel.emit("join", { "room-id": this.room.roomId });
+      if (this.callbackStatus) {
+        this.listenTunnel();
       }
-      if (options.result) {
-        const id = options.result.split("=")[2];
-        this.room.roomId = id;
-        this.changeIdentityStatus("join");
-        this.tunnel.emit("join", { "room-id": this.room.roomId });
+      if (this.join) {
+        const options = this.options;
+        if (options.scene) {
+          var scene = decodeURIComponent(options.scene);
+          const id = scene.split("=")[2];
+          this.room.roomId = id;
+          this.changeIdentityStatus("join");
+          this.tunnel.emit("join", { "room-id": this.room.roomId });
+        }
+        if (options.result) {
+          const id = options.result.split("=")[2];
+          this.room.roomId = id;
+          this.changeIdentityStatus("join");
+          this.tunnel.emit("join", { "room-id": this.room.roomId });
+        }
       }
+
       if (this.tunnelStatus !== "connected") {
         this.openTunnel();
       }
@@ -78,11 +86,12 @@ export default {
   },
   data() {
     return {
+      join: false,
       user: { roomId: "" },
       room: { qrCode: "", roomId: "", members: [] },
       tip: "您需要创建一个房间后才可以加入自己的在线画板",
       options: "",
-      callbackStatus:true
+      callbackStatus: true
     };
   },
   methods: {
@@ -90,17 +99,17 @@ export default {
       wx.getSetting({
         success: res => {
           if (!res.authSetting["scope.userInfo"]) {
-            this.callbackStatus=true;
+            this.callbackStatus = true;
             wx.navigateTo({
               url: "../loginButton/main"
             });
           } else {
-            if (this.callbackStatus) {
+            if (this.callbackStatus||this.join) {
               callback();
-              this.callbackStatus=false;
+              this.callbackStatus = false;
+              this.join=false
             }
             console.log("call");
-            
           }
         }
       });
