@@ -1,8 +1,12 @@
 # sketchpad
+> 使用 mpvue 开发微信小程序项目
+> Online 画室 powered by 一束破坏力很强的基光 
 
-> A Mpvue project
-
-## Build Setup
+#### 产品简介:
+>	Online画室一款实用的在线画板工具，用户可通过建立房间创建自己的专属画室，并邀请其他人加入，实时观看自己绘制的图案。
+#### 产品特点:
+> 多端在线，云端同步，性能多次优化。性能不逊色甚至超过大部分已经上线了的画布类小程序。
+## 启动步骤
 
 ``` bash
 # install dependencies
