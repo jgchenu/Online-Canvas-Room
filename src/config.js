@@ -2,7 +2,7 @@
  * 小程序配置文件, 使用前更名为config.js
  */
 
-var host = 'https://board.upwki.com/api/weapp';
+var host = '';
 
 
 var config = {
