@@ -202,7 +202,7 @@ export default {
       } else if (this.chosen === "move") {
         this.time++;
         if (this.time == 6) {
-          this.offsetX += (e.touches[0].x - this.prevPosition[0]) * 4;
+          this.offsetX += (e.touches[0].x - this.prevPosition[0]) * 2;
           this.time = 0;
         }
 

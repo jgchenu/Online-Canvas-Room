@@ -152,7 +152,7 @@ export default {
         success: res => {
           if (res.confirm) {
             console.log("用户点击确定");
-            this.sendMessage("shut", { "room-id": this.room.roomId });
+            this.sendMessage("shut", { "room-id": this.user.roomId });
           } else if (res.cancel) {
             console.log("用户点击取消");
           }
@@ -238,8 +238,8 @@ export default {
       //新建房间
       tunnel.on("create", data => {
         this.room.qrCode = data.room.qrcode;
-        this.room.roomId = data.room.id;
-        this.sendMessage("room", { "room-id": this.room.roomId });
+        this.user.roomId = data.room.id;
+        this.sendMessage("room", { "room-id": this.user.roomId });
         console.log("create：", data);
         // util.showTip("提示", "房间创建成功");
         this.changeIdentityStatus("created");
@@ -299,7 +299,9 @@ export default {
         if (!data.room) {
           this.room.members = [];
           this.room.qrCode = "";
+          this.tip = "您需要创建一个房间后才可以进入自己的在线画板";
           this.changeIdentityStatus("none");
+          console.log(this.user.roomId);
           this.sendMessage("room", { "room-id": this.user.roomId });
           // util.showTip("提示", "你已经退出房间了");
         } else {
