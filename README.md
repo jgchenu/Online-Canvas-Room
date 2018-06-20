@@ -1,5 +1,5 @@
 # Online 画室 小程序
-> 使用 mpvue 开发微信小程序项目
+> 本仓库是Online 画室 小程序对应的开源仓库，旨在分享微信小程序的开发经验。本仓库依赖于 [mpvue](https://github.com/Meituan-Dianping/mpvue) 框架，感谢美团开发团团队的努力。同时，请注意本仓库的开源协议为 GPL，这意味着你拥有运行、复制、修改、发行和传播该软件的自由，但是你修改后的软件本身也受 GPL 约束，你必须开放源代码。
 > Online 画室 powered by 一束破坏力很强的基光 
 
 #### 产品简介:
@@ -26,3 +26,9 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 
 小程序已经上线，扫小程序码进行体验<br/>
 ![image](https://raw.githubusercontent.com/jgchenu/Online-Canvas-Room/master/logo.jpg)
+
+
+## 开源协议
+查看 [LICENSE](https://github.com/jas0ncn/szushudong/blob/master/LICENSE)
+
+Copyright (c) 2018-present, jgchen
