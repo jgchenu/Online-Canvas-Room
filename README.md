@@ -27,6 +27,6 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 
 
 ## 开源协议
-查看 [LICENSE](https://github.com/jas0ncn/szushudong/blob/master/LICENSE)
+查看 [LICENSE](https://github.com/jgchenu/Online-Canvas-Room/blob/master/LICENSE.md)
 
 Copyright (c) 2018-present, jgchen
